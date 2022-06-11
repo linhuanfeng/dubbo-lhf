@@ -13,10 +13,13 @@
 
 ### 2、启动类标注解`@EnableDubbo`,服务接口标注`@RpcService(interfaceClass = HelloService.class)`
 ### 3、配置zk注册中心地址和dubbo服务暴露的接口即可
+```yml
 dubbo:
     registry:
         connect-string: 192.168.42.100:2181,192.168.42.101:2181,192.168.42.102:2181
     protocol:
         port: 9090
+```
+
 完工！
-具体课参考dubbo-test测试模块
+具体可参考dubbo-test测试模块
