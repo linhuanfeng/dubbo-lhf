@@ -1,7 +1,7 @@
 # dubbo-lhf
 仿dubbo轻量级RPC框架，基于Netty,Zookeeper,SpringBoot
 ### 使用教程
-使用方式dubbo相同
+使用方式和dubbo相同
 #### 1、首先创建一个SpringBoot项目，引入依赖
 ```xml
 <dependency>
