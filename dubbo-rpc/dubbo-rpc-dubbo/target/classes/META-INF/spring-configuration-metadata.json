@@ -1,0 +1,30 @@
+{
+  "groups": [
+    {
+      "name": "dubbo.protocol",
+      "type": "com.lhf.dubbo.rpc.protocol.dubbo.ProtocolConfig",
+      "sourceType": "com.lhf.dubbo.rpc.protocol.dubbo.ProtocolConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "dubbo.protocol.host",
+      "type": "java.lang.String",
+      "sourceType": "com.lhf.dubbo.rpc.protocol.dubbo.ProtocolConfig",
+      "defaultValue": "127.0.0.1"
+    },
+    {
+      "name": "dubbo.protocol.name",
+      "type": "java.lang.String",
+      "sourceType": "com.lhf.dubbo.rpc.protocol.dubbo.ProtocolConfig",
+      "defaultValue": "dubbo"
+    },
+    {
+      "name": "dubbo.protocol.port",
+      "type": "java.lang.Integer",
+      "sourceType": "com.lhf.dubbo.rpc.protocol.dubbo.ProtocolConfig",
+      "defaultValue": 8080
+    }
+  ],
+  "hints": []
+}

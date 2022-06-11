@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="dubbo-remoting-api" />
+        <module name="dubbo-registry-api" />
+        <module name="dubbo-test" />
+        <module name="dubbo-remoting-netty" />
+        <module name="dubbo-common" />
+        <module name="dubbo-rpc-dubbo" />
+        <module name="dubbo-config-api" />
+        <module name="dubbo-remoting-zookeeper" />
+        <module name="dubbo-rpc-api" />
+        <module name="dubbo-config-spring" />
+        <module name="dubbo-registry-zookeeper" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="dubbo-all" target="1.5" />
+      <module name="dubbo-client" target="1.5" />
+      <module name="dubbo-common" target="1.8" />
+      <module name="dubbo-config" target="1.5" />
+      <module name="dubbo-config-api" target="1.8" />
+      <module name="dubbo-config-spring" target="1.8" />
+      <module name="dubbo-lhf" target="1.5" />
+      <module name="dubbo-registry" target="1.5" />
+      <module name="dubbo-registry-api" target="1.5" />
+      <module name="dubbo-registry-zookeeper" target="1.8" />
+      <module name="dubbo-remoting" target="1.8" />
+      <module name="dubbo-remoting-api" target="1.8" />
+      <module name="dubbo-remoting-netty" target="1.8" />
+      <module name="dubbo-remoting-zookeeper" target="1.8" />
+      <module name="dubbo-rpc" target="1.8" />
+      <module name="dubbo-rpc-api" target="1.8" />
+      <module name="dubbo-rpc-dubbo" target="1.8" />
+      <module name="dubbo-server" target="1.8" />
+      <module name="dubbo-test" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
