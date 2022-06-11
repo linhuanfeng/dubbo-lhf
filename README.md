@@ -20,6 +20,6 @@ dubbo:
     protocol:
         port: 9090
 ```
-
+创作不易，靓仔靓女给个star吧！！
 完工！
 具体可参考dubbo-test测试模块
