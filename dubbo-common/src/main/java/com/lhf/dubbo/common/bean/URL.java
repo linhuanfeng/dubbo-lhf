@@ -9,7 +9,7 @@ public class URL implements Serializable {
     String interfaceName;
     ServiceType type;
     String serviceName; // 默认等于interfaceName
-    String version="1.0.0";
+    String version;
     String host;
     Integer port;
 
@@ -80,5 +80,18 @@ public class URL implements Serializable {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    @Override
+    public String toString() {
+        return "URL{" +
+                "root='" + root + '\'' +
+                ", interfaceName='" + interfaceName + '\'' +
+                ", type=" + type +
+                ", serviceName='" + serviceName + '\'' +
+                ", version='" + version + '\'' +
+                ", host='" + host + '\'' +
+                ", port=" + port +
+                '}';
     }
 }

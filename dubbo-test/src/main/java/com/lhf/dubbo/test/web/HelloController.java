@@ -12,8 +12,16 @@ public class HelloController {
     @RpcReference(interfaceClass = HelloService.class,version = "1.0.0")
     private HelloService service;
 
-    @GetMapping("/say")
+    @RpcReference(interfaceClass = HelloService.class,version = "1.0.1")
+    private HelloService service2;
+
+    @GetMapping("/sayhello")
     public String sayHello(){
         return "远程调用的结果是："+service.sayHello("张三");
+    }
+
+    @GetMapping("/sayhello2")
+    public String sayHello2(){
+        return "远程调用的结果是："+service2.sayHello("张三");
     }
 }

@@ -21,6 +21,8 @@ public class RpcRequest implements Serializable {
 
     private transient Type[] returnTypes;
 
+    private String version;
+
     @Override
     public String toString() {
         return "RpcRequest{" +
@@ -33,6 +35,14 @@ public class RpcRequest implements Serializable {
                 ", returnType=" + returnType +
                 ", returnTypes=" + Arrays.toString(returnTypes) +
                 '}';
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public String getRequestId() {

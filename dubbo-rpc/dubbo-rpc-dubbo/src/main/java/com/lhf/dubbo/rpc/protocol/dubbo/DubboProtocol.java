@@ -1,9 +1,7 @@
 package com.lhf.dubbo.rpc.protocol.dubbo;
 
-import com.lhf.dubbo.common.bean.RpcFuture;
-import com.lhf.dubbo.common.bean.RpcRequest;
-import com.lhf.dubbo.common.bean.RpcResponse;
-import com.lhf.dubbo.common.bean.URL;
+import com.lhf.dubbo.common.bean.*;
+import com.lhf.dubbo.common.utils.ProtocolUtils;
 import com.lhf.dubbo.remoting.Channel;
 import com.lhf.dubbo.remoting.exchange.ExchangeHandler;
 import com.lhf.dubbo.remoting.exchange.ExchangeHandlerAdapter;
@@ -85,8 +83,10 @@ public class DubboProtocol extends AbstractProtocol {
 
     Invoker<?> getInvoker(RpcRequest request) {
         String serviceName = request.getInterfaceName();
-        Assert.hasText(serviceName, "serviceName不能为空");
-        Exporter<?> exporter = exporterMap.get(serviceName);
+        String version = request.getVersion();
+        Assert.hasText(serviceName, "serviceName不能为空,at "+request);
+        Assert.hasText(version, "version不能为空,at "+request);
+        Exporter<?> exporter = exporterMap.get(ProtocolUtils.exporterKey(serviceName,version));
         return exporter.getInvoker();
     }
 
@@ -105,22 +105,19 @@ public class DubboProtocol extends AbstractProtocol {
         URL url = invoker.getUrl();
         // 服务key
         String key = serviceKey(url);
-
-        openServer(url); // 开启netty服务
-
+        // 开启netty服务
+        openServer(url);
+        // 创建暴露对象
         Exporter<T> exporter = new DubboExporter<>(invoker);
 //        exporterMap.put(NameGenerator.makeServiceName(invoker.getUrl().getInterfaceName(), invoker.getUrl().getVersion()), exporter);
-        exporterMap.put(invoker.getInterface().getName(),exporter);
+        // 缓存暴露对象，key(interfaceName:version) value(expoter)
+        exporterMap.put(ProtocolUtils.exporterKey(invoker.getUrl().getInterfaceName(),invoker.getUrl().getVersion()),exporter);
 
         return exporter;
     }
 
     /**
-     * 客户端代理对象
-     * @param type
-     * @param url
-     * @return
-     * @throws Throwable
+     * 生成客户端代理对象
      */
     @Override
     public Object refer(Class type, URL url) throws Throwable {
@@ -143,6 +140,7 @@ public class DubboProtocol extends AbstractProtocol {
                 rpcRequest.setMethodName(method.getName());
                 rpcRequest.setArguments(args);
                 rpcRequest.setParameterTypes(method.getParameterTypes());
+                rpcRequest.setVersion(url.getVersion());
                 RpcFuture rpcFuture = protocolClient.send(rpcRequest);
                 pendingRpc.put(rpcRequest.getRequestId(), rpcFuture);
                 return rpcFuture.get();

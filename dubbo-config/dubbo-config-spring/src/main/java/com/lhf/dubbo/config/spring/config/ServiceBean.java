@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.CollectionUtils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class ServiceBean extends ServiceConfig implements ApplicationContextAwar
         if(!CollectionUtils.isEmpty(serviceMap)){
             for (Object serviceBean : serviceMap.values()) {
                 RpcService rpcService = serviceBean.getClass().getAnnotation(RpcService.class);
-                URL url = getProviderUrl(rpcService.interfaceClass().getName());
+                URL url = generateUrl(rpcService);
                 Class<?> claz = rpcService.interfaceClass();
                 AbstractProxyInvoker<Object> invoker = new AbstractProxyInvoker<Object>(serviceBean,claz ,url ) {
                     @Override
@@ -63,15 +64,16 @@ public class ServiceBean extends ServiceConfig implements ApplicationContextAwar
 
     /**
      * 获取服务暴露的url
-     * @param interfaceName
+     * @param rpcService
      * @return
      */
-    private URL getProviderUrl(String interfaceName) {
+    private URL generateUrl(RpcService rpcService) {
         URL url = new URL();
         url.setHost(protocolConfig.getHost());
         url.setPort(protocolConfig.getPort());
         url.setType(ServiceType.provider);
-        url.setInterfaceName(interfaceName);
+        url.setInterfaceName(rpcService.interfaceClass().getName());
+        url.setVersion(rpcService.version());
         return url;
     }
 

@@ -3,8 +3,7 @@ package com.lhf.dubbo.common.utils;
 import com.lhf.dubbo.common.bean.URL;
 import org.springframework.util.StringUtils;
 
-import static com.lhf.dubbo.common.bean.CommonConstants.PATH_SEPARATOR;
-import static com.lhf.dubbo.common.bean.CommonConstants.SEQUENTIAL_SEPARATOR;
+import static com.lhf.dubbo.common.bean.CommonConstants.*;
 
 public class ProtocolUtils {
     /**
@@ -42,5 +41,9 @@ public class ProtocolUtils {
                 .append(url.getVersion()).append(PATH_SEPARATOR)
                 .append(url.getType());
         return sb.toString();
+    }
+
+    public static String exporterKey(String interfaceName,String version){
+        return interfaceName+EXPORTER_SEPARATOR+version;
     }
 }

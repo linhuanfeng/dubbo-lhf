@@ -1,13 +1,11 @@
 package com.lhf.dubbo.registry.zookeeper;
 
-import com.lhf.dubbo.common.bean.ServiceType;
 import com.lhf.dubbo.common.bean.URL;
 import com.lhf.dubbo.registry.Registry;
 import com.lhf.dubbo.remoting.zookeeper.curator.RegistryConfig;
 import com.lhf.dubbo.rpc.Exporter;
 import com.lhf.dubbo.rpc.Invoker;
 import com.lhf.dubbo.rpc.Protocol;
-import com.lhf.dubbo.rpc.protocol.dubbo.DubboExporter;
 import com.lhf.dubbo.rpc.protocol.dubbo.DubboProtocol;
 
 import java.util.List;
@@ -76,16 +74,13 @@ public class RegistryProtocol implements Protocol {
      * @return
      * @param <T>
      */
-    private <T> URL getProviderUrl(String interfaceName) {
-        List<URL> providerUrls = getProviderUrls(interfaceName);
+    private <T> URL getProviderUrl(URL url) {
+        List<URL> providerUrls = getProviderUrls(url);
         // 负载均衡
         return providerUrls.get(0);
     }
 
-    private List<URL> getProviderUrls(String interfaceName){
-        URL url = new URL();
-        url.setInterfaceName(interfaceName);
-        url.setType(ServiceType.provider);
+    private List<URL> getProviderUrls(URL url){
         if(registry==null)
             registry=getRegistry();
         try {
@@ -109,16 +104,11 @@ public class RegistryProtocol implements Protocol {
     }
 
     @Override
-    public Object refer(Class type) throws Throwable{
-        URL url = getProviderUrl(type.getName());
-        return refer(type,url);
-    }
-
-    @Override
     public Object refer(Class type, URL url) throws Throwable{
+        URL providerUrl = getProviderUrl(url);
         if(protocol==null){
             protocol = new DubboProtocol();
         }
-        return protocol.refer(type,url);
+        return protocol.refer(type,providerUrl);
     }
 }

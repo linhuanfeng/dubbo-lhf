@@ -21,6 +21,4 @@ public interface Protocol {
      * @return
      */
     Object refer(Class type, URL url) throws Throwable;
-
-    Object refer(Class type) throws Throwable;
 }

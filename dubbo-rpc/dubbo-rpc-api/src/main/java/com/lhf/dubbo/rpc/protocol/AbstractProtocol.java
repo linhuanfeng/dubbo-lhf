@@ -25,11 +25,6 @@ public abstract class AbstractProtocol implements Protocol {
         }
     }
 
-    @Override
-    public Object refer(Class type) throws Throwable {
-        throw new UnsupportedOperationException();
-    }
-
     protected abstract ProtocolServer createServer(URL url) throws Throwable;
     protected abstract ProtocolClient createClient(URL url) throws Throwable;
     protected static String serviceKey(URL url) {

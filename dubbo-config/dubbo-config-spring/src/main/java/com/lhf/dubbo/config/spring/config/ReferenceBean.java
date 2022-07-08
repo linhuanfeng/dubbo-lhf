@@ -1,6 +1,8 @@
 package com.lhf.dubbo.config.spring.config;
 
 import com.lhf.dubbo.common.annotation.RpcReference;
+import com.lhf.dubbo.common.bean.ServiceType;
+import com.lhf.dubbo.common.bean.URL;
 import com.lhf.dubbo.registry.zookeeper.RegistryProtocol;
 import com.lhf.dubbo.remoting.zookeeper.curator.RegistryConfig;
 import org.springframework.beans.BeansException;
@@ -8,7 +10,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.lang.reflect.Field;
-import java.util.Map;
 
 public class ReferenceBean<T> implements ApplicationContextAware {
     private RegistryProtocol registryProtocol;
@@ -26,7 +27,7 @@ public class ReferenceBean<T> implements ApplicationContextAware {
                 if(field.getAnnotation(RpcReference.class)!=null){
                     field.setAccessible(true);
                     try {
-                        Object proxy = registryProtocol.refer(field.getType());
+                        Object proxy = registryProtocol.refer(field.getType(),generateUrl(field));
                         field.set(bean,proxy);
                     } catch (Throwable e) {
                         throw new RuntimeException(e);
@@ -34,6 +35,14 @@ public class ReferenceBean<T> implements ApplicationContextAware {
                 }
             }
         }
+    }
+
+    private URL generateUrl(Field field){
+        URL url = new URL();
+        url.setInterfaceName(field.getDeclaredAnnotation(RpcReference.class).interfaceClass().getName());
+        url.setType(ServiceType.provider);
+        url.setVersion(field.getDeclaredAnnotation(RpcReference.class).version());
+        return url;
     }
 
     private void init() {

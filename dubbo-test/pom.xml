@@ -20,9 +20,9 @@
             </plugin>
         </plugins>
     </build>
-    <properties>
-        <spring.boot.version>2.3.0.release</spring.boot.version>
-    </properties>
+<!--    <properties>-->
+<!--        <spring.boot.version>2.3.0.release</spring.boot.version>-->
+<!--    </properties>-->
 
     <artifactId>dubbo-test</artifactId>
     <dependencies>
@@ -45,6 +45,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
     </dependencies>
+    <!--统一版本管理-->
     <!--统一版本管理-->
     <dependencyManagement>
         <dependencies>

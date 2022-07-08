@@ -10,14 +10,12 @@
     {
       "name": "dubbo.registry.connect-string",
       "type": "java.lang.String",
-      "sourceType": "com.lhf.dubbo.remoting.zookeeper.curator.RegistryConfig",
-      "defaultValue": "127.0.0.1:2181"
+      "sourceType": "com.lhf.dubbo.remoting.zookeeper.curator.RegistryConfig"
     },
     {
       "name": "dubbo.registry.session-timeout",
       "type": "java.lang.Integer",
-      "sourceType": "com.lhf.dubbo.remoting.zookeeper.curator.RegistryConfig",
-      "defaultValue": 100000
+      "sourceType": "com.lhf.dubbo.remoting.zookeeper.curator.RegistryConfig"
     }
   ],
   "hints": []
