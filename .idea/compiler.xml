@@ -12,8 +12,11 @@
         <module name="dubbo-test" />
         <module name="dubbo-remoting-netty" />
         <module name="dubbo-common" />
+        <module name="common-api" />
         <module name="dubbo-rpc-dubbo" />
+        <module name="client-test" />
         <module name="dubbo-config-api" />
+        <module name="server-test" />
         <module name="dubbo-remoting-zookeeper" />
         <module name="dubbo-rpc-api" />
         <module name="dubbo-config-spring" />
@@ -21,15 +24,17 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="client-test" target="1.8" />
+      <module name="common-api" target="1.8" />
       <module name="dubbo-all" target="1.5" />
       <module name="dubbo-client" target="1.5" />
       <module name="dubbo-common" target="1.8" />
-      <module name="dubbo-config" target="1.5" />
+      <module name="dubbo-config" target="1.8" />
       <module name="dubbo-config-api" target="1.8" />
       <module name="dubbo-config-spring" target="1.8" />
-      <module name="dubbo-lhf" target="1.5" />
-      <module name="dubbo-registry" target="1.5" />
-      <module name="dubbo-registry-api" target="1.5" />
+      <module name="dubbo-lhf" target="1.8" />
+      <module name="dubbo-registry" target="1.8" />
+      <module name="dubbo-registry-api" target="1.8" />
       <module name="dubbo-registry-zookeeper" target="1.8" />
       <module name="dubbo-remoting" target="1.8" />
       <module name="dubbo-remoting-api" target="1.8" />
@@ -40,6 +45,14 @@
       <module name="dubbo-rpc-dubbo" target="1.8" />
       <module name="dubbo-server" target="1.8" />
       <module name="dubbo-test" target="1.8" />
+      <module name="server-test" target="1.8" />
     </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="client-test" options="-parameters" />
+      <module name="common-api" options="-parameters" />
+      <module name="server-test" options="-parameters" />
+    </option>
   </component>
 </project>

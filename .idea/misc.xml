@@ -6,6 +6,9 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/dubbo-config/dubbo-config-api/pom.xml" />
         <option value="$PROJECT_DIR$/dubbo-config/dubbo-config-spring/pom.xml" />
+        <option value="$PROJECT_DIR$/dubbo-test/client-test/pom.xml" />
+        <option value="$PROJECT_DIR$/dubbo-test/server-test/pom.xml" />
+        <option value="$PROJECT_DIR$/dubbo-test/common-api/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

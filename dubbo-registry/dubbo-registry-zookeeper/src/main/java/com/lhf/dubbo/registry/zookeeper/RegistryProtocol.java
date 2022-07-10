@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class RegistryProtocol implements Protocol {
     // dubboProtocol
-    private Protocol protocol;
+    private Protocol dubboProtocol;
     private Registry registry;
 
     private RegistryConfig registryConfig;
@@ -31,10 +31,8 @@ public class RegistryProtocol implements Protocol {
      * @return
      */
     public <T> Exporter<T> export(Invoker<T> invoker) throws Throwable {
-        // 获取服务注册的url
-        URL registryUrl=getRegistryUrl(invoker);
-        // 获取服务暴露的url
-//        URL providerUrl=getProviderUrl(invoker);
+        // 服务注册的url
+        URL registryUrl=invoker.getUrl();
 
         // 本地服务暴露，具体交给DubboProtocol暴露,并得到一个Exporter暴露对象
         Exporter exporter=doLocalExport(invoker);
@@ -52,10 +50,10 @@ public class RegistryProtocol implements Protocol {
      * @return
      */
     private <T> Exporter doLocalExport(Invoker<T> invoker) throws Throwable {
-        if(protocol==null){
-            protocol = new DubboProtocol();
+        if(dubboProtocol==null){
+            dubboProtocol = new DubboProtocol();
         }
-        return protocol.export(invoker);
+        return dubboProtocol.export(invoker);
     }
 
     /**
@@ -99,16 +97,12 @@ public class RegistryProtocol implements Protocol {
         return new ZookeeperRegistryFactory().getRegistry(registryConfig);
     }
 
-    private <T> URL getRegistryUrl(Invoker<T> invoker) {
-        return invoker.getUrl();
-    }
-
     @Override
     public Object refer(Class type, URL url) throws Throwable{
-        URL providerUrl = getProviderUrl(url);
-        if(protocol==null){
-            protocol = new DubboProtocol();
+        List<URL> providerUrls = getProviderUrls(url);
+        if(dubboProtocol==null){
+            dubboProtocol = new DubboProtocol();
         }
-        return protocol.refer(type,providerUrl);
+        return dubboProtocol.refer(type,providerUrls);
     }
 }

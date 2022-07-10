@@ -32,7 +32,6 @@ public class DubboProtocolClient implements ProtocolClient {
 
     private ExchangeClient exchangeClient; // headerExchangeClient
     private String address;
-    private Map<String, Object> attributes = new ConcurrentHashMap<>();
 
     public RpcFuture send(RpcRequest message){
         return exchangeClient.send(message);
@@ -41,9 +40,8 @@ public class DubboProtocolClient implements ProtocolClient {
     public DubboProtocolClient(ExchangeClient exchangeClient) {
         this.exchangeClient = exchangeClient;
     }
-
     @Override
-    public ExchangeClient getClient() {
+    public ExchangeClient getExchangeClient() {
         return exchangeClient;
     }
 
@@ -52,28 +50,7 @@ public class DubboProtocolClient implements ProtocolClient {
         return address;
     }
 
-    @Override
     public void setAddress(String address) {
         this.address = address;
-    }
-
-//    @Override
-//    public URL getUrl() {
-//        return exchangeClient.get();
-//    }
-
-    @Override
-    public void reset(URL url) {
-
-    }
-
-//    @Override
-//    public void close() {
-//        exchangeClient.close();
-//    }
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        return attributes;
     }
 }

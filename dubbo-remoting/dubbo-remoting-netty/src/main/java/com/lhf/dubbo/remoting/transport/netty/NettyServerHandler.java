@@ -1,11 +1,14 @@
 package com.lhf.dubbo.remoting.transport.netty;
 
+import com.lhf.dubbo.common.bean.RpcRequest;
 import com.lhf.dubbo.common.bean.URL;
 import com.lhf.dubbo.remoting.ChannelHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @io.netty.channel.ChannelHandler.Sharable
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     private final URL url;
@@ -23,12 +26,14 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        log.info("channel注册成功：{}",ctx);
         super.channelRegistered(ctx);
         this.channel=ctx.channel();
     }
 
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        log.info("channel注册成功：{}",ctx);
         super.channelUnregistered(ctx);
     }
 

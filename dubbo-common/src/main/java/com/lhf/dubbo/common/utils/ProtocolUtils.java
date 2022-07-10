@@ -46,4 +46,13 @@ public class ProtocolUtils {
     public static String exporterKey(String interfaceName,String version){
         return interfaceName+EXPORTER_SEPARATOR+version;
     }
+
+//    public static String serverAddress(URL url){
+//        return url.getHost()+url.getPort();
+//    }
+
+    // 保存服务端netty连接的key
+    public static String serviceNodeKey(URL url){
+        return url.getInterfaceName()+"-"+url.getVersion();
+    }
 }

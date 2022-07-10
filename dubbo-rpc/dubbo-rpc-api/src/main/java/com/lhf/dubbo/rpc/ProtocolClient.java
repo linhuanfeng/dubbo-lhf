@@ -33,26 +33,26 @@ import java.util.Map;
 public interface ProtocolClient {
 
     RpcFuture send(RpcRequest message);
+    ExchangeClient getExchangeClient();
+//    default ExchangeClient getClient() {
+//        return null;
+//    }
 
-    default ExchangeClient getClient() {
-        return null;
-    }
-
-    default void setRemotingServers(RemotingServer server) {
-    }
+//    default void setRemotingServers(RemotingServer server) {
+//    }
 
     String getAddress();
 
-    void setAddress(String address);
+//    void setAddress(String address);
 
 //    default URL getUrl() {
 //        return null;
 //    }
 
-    default void reset(URL url) {
-    }
+//    default void reset(URL url) {
+//    }
 
 //    void close();
 
-    Map<String, Object> getAttributes();
+//    Map<String, Object> getAttributes();
 }

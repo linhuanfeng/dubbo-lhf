@@ -5,7 +5,9 @@ import com.lhf.dubbo.remoting.ChannelHandler;
 import com.lhf.dubbo.rpc.RpcInvocation;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @io.netty.channel.ChannelHandler.Sharable
 public class NettyClientHandler extends SimpleChannelInboundHandler {
     private final URL url;
@@ -22,12 +24,17 @@ public class NettyClientHandler extends SimpleChannelInboundHandler {
 
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        log.info("channel注册成功：{}",ctx);
         super.channelRegistered(ctx);
     }
 
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        log.info("channel注销：{}",ctx);
         super.channelUnregistered(ctx);
+        handler.
+        // 通知dubboProtocol,移除可用的channel
+//        handler.disconnected(NettyChannel.getOrAddChannel(ctx.channel(),url,handler));
     }
 
     @Override

@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/dubbo-test/client-test/client-test.iml" filepath="$PROJECT_DIR$/dubbo-test/client-test/client-test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dubbo-test/common-api/common-api.iml" filepath="$PROJECT_DIR$/dubbo-test/common-api/common-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/dubbo-common/dubbo-common.iml" filepath="$PROJECT_DIR$/dubbo-common/dubbo-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/dubbo-config/dubbo-config.iml" filepath="$PROJECT_DIR$/dubbo-config/dubbo-config.iml" />
       <module fileurl="file://$PROJECT_DIR$/dubbo-config/dubbo-config-api/dubbo-config-api.iml" filepath="$PROJECT_DIR$/dubbo-config/dubbo-config-api/dubbo-config-api.iml" />
@@ -18,6 +20,7 @@
       <module fileurl="file://$PROJECT_DIR$/dubbo-rpc/dubbo-rpc-api/dubbo-rpc-api.iml" filepath="$PROJECT_DIR$/dubbo-rpc/dubbo-rpc-api/dubbo-rpc-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/dubbo-rpc/dubbo-rpc-dubbo/dubbo-rpc-dubbo.iml" filepath="$PROJECT_DIR$/dubbo-rpc/dubbo-rpc-dubbo/dubbo-rpc-dubbo.iml" />
       <module fileurl="file://$PROJECT_DIR$/dubbo-test/dubbo-test.iml" filepath="$PROJECT_DIR$/dubbo-test/dubbo-test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dubbo-test/server-test/server-test.iml" filepath="$PROJECT_DIR$/dubbo-test/server-test/server-test.iml" />
     </modules>
   </component>
 </project>

@@ -17,6 +17,23 @@ public abstract class AbstractChannel /**extends AbstractPeer**/ implements Chan
     }
 
     @Override
+    public URL getUrl() {
+        return url;
+    }
+
+    public void setUrl(URL url) {
+        this.url = url;
+    }
+
+    public ChannelHandler getChannelHandler() {
+        return channelHandler;
+    }
+
+    public void setChannelHandler(ChannelHandler channelHandler) {
+        this.channelHandler = channelHandler;
+    }
+
+    @Override
     public io.netty.channel.Channel getChannel() {
         return channel;
     }

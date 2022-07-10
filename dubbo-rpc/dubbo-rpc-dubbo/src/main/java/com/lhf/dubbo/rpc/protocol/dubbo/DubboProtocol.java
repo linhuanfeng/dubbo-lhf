@@ -3,27 +3,36 @@ package com.lhf.dubbo.rpc.protocol.dubbo;
 import com.lhf.dubbo.common.bean.*;
 import com.lhf.dubbo.common.utils.ProtocolUtils;
 import com.lhf.dubbo.remoting.Channel;
+import com.lhf.dubbo.remoting.Client;
+import com.lhf.dubbo.remoting.ExchangeClient;
 import com.lhf.dubbo.remoting.exchange.ExchangeHandler;
 import com.lhf.dubbo.remoting.exchange.ExchangeHandlerAdapter;
+import com.lhf.dubbo.remoting.transport.netty.NettyClient;
 import com.lhf.dubbo.remoting.transport.netty.support.Exchangers;
 import com.lhf.dubbo.rpc.*;
 import com.lhf.dubbo.rpc.protocol.AbstractProtocol;
-import com.lhf.dubbo.rpc.proxy.jdk.JdkProxyFactory;
-import org.apache.log4j.Logger;
+import com.lhf.dubbo.rpc.protocol.dubbo.route.LBExtension;
+import com.lhf.dubbo.rpc.protocol.dubbo.route.LoadBalance;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cglib.proxy.InvocationHandler;
 import org.springframework.cglib.proxy.Proxy;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 public class DubboProtocol extends AbstractProtocol {
-    private Logger logger = Logger.getLogger(DubboProtocol.class);
     private Map<String, Exporter<?>> exporterMap = new ConcurrentHashMap<>();
     private Map<String, RpcFuture> pendingRpc = new ConcurrentHashMap<>();
+    // 统一使用spi方式获取负载均衡器
+    private LoadBalance loadBalance = LBExtension.getLoadBalance();
     /**
-     * 通过requestHandler进行层与层之间的传递
+     * 通过requestHandler进行层与层之间的传递,
+     * 被多个netty连接共享，是否线程安全
      */
     private ExchangeHandler exchangeHandler = new ExchangeHandlerAdapter() {
         @Override
@@ -33,6 +42,8 @@ public class DubboProtocol extends AbstractProtocol {
 
         @Override
         public void disconnected(Channel channel) {
+            // channel断开，exporterMap移除可用连接，同时，考虑支持重连
+            log.info("channel:{}",channel.getChannel());
 
         }
 
@@ -57,36 +68,62 @@ public class DubboProtocol extends AbstractProtocol {
         public Object reply(Channel channel, Object message) {
             if (message instanceof RpcResponse) {
                 RpcResponse rpcResponse = (RpcResponse) message;
-                logger.debug("收到响应："+ rpcResponse);
+//                logger.debug("收到响应："+ rpcResponse);
                 RpcFuture rpcFuture = pendingRpc.get(rpcResponse.getRequestId());
-                if(rpcFuture!=null){
+                if (rpcFuture != null) {
                     pendingRpc.remove(rpcResponse.getRequestId());
                     rpcFuture.setRpcResponse(rpcResponse);
-                }else {
-                    logger.debug("响应匹配失败："+ rpcResponse);
+                } else {
+//                    logger.debug("响应匹配失败："+ rpcResponse);
                 }
-            }else if (message instanceof RpcRequest) {
+            } else if (message instanceof RpcRequest) {
                 RpcRequest request = (RpcRequest) message;
-                logger.debug("收到请求："+ request);
+                if(Beat.BEAT_ID.equals(request.getRequestId())){
+                    log.info("channel:{},收到心跳，无需恢复",channel);
+                    return null;
+                }
+//                logger.debug("收到请求："+ request);
                 Invoker<?> invoker = getInvoker(request);
                 Object res = invoker.invoke(request);
                 RpcResponse response = new RpcResponse();
                 response.setRequestId(request.getRequestId());
                 response.setResult(res);
                 return response;
-            }else {
-                logger.debug("收到普通消息："+ message);
+            } else {
+//                logger.debug("收到普通消息："+ message);
             }
             return null;
         }
     };
 
+    private void channelReconnect(Channel channel){
+        log.info("channel断开，开启自动重连");
+        io.netty.channel.Channel nettyChannel = channel.getChannel();
+        URL url = channel.getUrl();
+        try {
+            // 移除旧数据
+            String clientKey=ProtocolUtils.serviceNodeKey(url);
+            List<ProtocolClient> clientList = protocolClientMap.get(clientKey);
+            for (ProtocolClient protocolClient : clientList) {
+                ExchangeClient exchangeClient = protocolClient.getExchangeClient();
+                Client client = exchangeClient.getClient(); // nettyClient
+                // 替换新的client
+//                client.
+            }
+            // 重连
+            openClient(url);
+        } catch (Throwable e) {
+            log.error("netty连接异常");
+            throw new RuntimeException(e);
+        }
+    }
+
     Invoker<?> getInvoker(RpcRequest request) {
         String serviceName = request.getInterfaceName();
         String version = request.getVersion();
-        Assert.hasText(serviceName, "serviceName不能为空,at "+request);
-        Assert.hasText(version, "version不能为空,at "+request);
-        Exporter<?> exporter = exporterMap.get(ProtocolUtils.exporterKey(serviceName,version));
+        Assert.hasText(serviceName, "serviceName不能为空,at " + request);
+        Assert.hasText(version, "version不能为空,at " + request);
+        Exporter<?> exporter = exporterMap.get(ProtocolUtils.exporterKey(serviceName, version));
         return exporter.getInvoker();
     }
 
@@ -103,26 +140,32 @@ public class DubboProtocol extends AbstractProtocol {
     @Override
     public <T> Exporter<T> export(Invoker<T> invoker) throws Throwable {
         URL url = invoker.getUrl();
-        // 服务key
-        String key = serviceKey(url);
         // 开启netty服务
         openServer(url);
         // 创建暴露对象
         Exporter<T> exporter = new DubboExporter<>(invoker);
-//        exporterMap.put(NameGenerator.makeServiceName(invoker.getUrl().getInterfaceName(), invoker.getUrl().getVersion()), exporter);
         // 缓存暴露对象，key(interfaceName:version) value(expoter)
-        exporterMap.put(ProtocolUtils.exporterKey(invoker.getUrl().getInterfaceName(),invoker.getUrl().getVersion()),exporter);
+        exporterMap.put(ProtocolUtils.exporterKey(invoker.getUrl().getInterfaceName(), invoker.getUrl().getVersion()), exporter);
 
         return exporter;
     }
 
     /**
      * 生成客户端代理对象
+     * 有多个protocolClient，并实现负载均衡
+     *
+     * @param type
+     * @param urls 所有可用的服务url
+     * @return
+     * @throws Throwable
      */
     @Override
-    public Object refer(Class type, URL url) throws Throwable {
-        openClient(url); // 开启netty服务
-
+    public Object refer(Class type, List<URL> urls) throws Throwable {
+        Assert.notEmpty(urls, "没有找到对应的服务提供者：" + type);
+        // 开启netty连接
+        for (URL url : urls) {
+            openClient(url);
+        }
         // 服务代理，调用远程服务
         return Proxy.newProxyInstance(type.getClassLoader(), new Class[]{type}, new InvocationHandler() {
             @Override
@@ -140,8 +183,11 @@ public class DubboProtocol extends AbstractProtocol {
                 rpcRequest.setMethodName(method.getName());
                 rpcRequest.setArguments(args);
                 rpcRequest.setParameterTypes(method.getParameterTypes());
-                rpcRequest.setVersion(url.getVersion());
-                RpcFuture rpcFuture = protocolClient.send(rpcRequest);
+                rpcRequest.setVersion(urls.get(0).getVersion());
+                // 负载均衡
+                List<ProtocolClient> protocolClients = protocolClientMap.get(ProtocolUtils.serviceNodeKey(urls.get(0)));
+                log.info("可用的客户端连接有{}个，", protocolClients.size());
+                RpcFuture rpcFuture = loadBalance.select(ProtocolUtils.exporterKey(urls.get(0).getInterfaceName(),urls.get(0).getVersion()),protocolClients).send(rpcRequest);
                 pendingRpc.put(rpcRequest.getRequestId(), rpcFuture);
                 return rpcFuture.get();
             }
@@ -164,13 +210,11 @@ public class DubboProtocol extends AbstractProtocol {
         return protocolServer;
     }
 
-    protected ProtocolClient createClient(URL url) throws Throwable {
-        if (exchangeClient == null) {
-            exchangeClient = Exchangers.connect(url, exchangeHandler);
-        }
-        if (protocolClient == null) {
-            protocolClient = new DubboProtocolClient(exchangeClient);
-        }
+    protected ProtocolClient createClient(URL url) {
+//        if (exchangeClient == null) {
+//            exchangeClient = Exchangers.connect(url, exchangeHandler);
+//        }
+        ProtocolClient protocolClient = new DubboProtocolClient(Exchangers.connect(url, exchangeHandler));
         return protocolClient;
     }
 }

@@ -11,6 +11,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
 import java.net.InetSocketAddress;
@@ -53,21 +54,10 @@ public class NettyServer extends AbstractServer {
         workerGroup = new NioEventLoopGroup(2);
         bootstrap = new ServerBootstrap();
         // NettyHandler持有ChannelHandler,ChannelHandler是各层之间消息传送的中介
-        final NettyServerHandler nettyHandler = new NettyServerHandler(getUrl(), getChannelHandler()); // 因为本身ChannelHandler对象
+        final NettyServerHandler nettyServerHandler = new NettyServerHandler(getUrl(), getChannelHandler()); // 因为本身ChannelHandler对象
         bootstrap.channel(NioServerSocketChannel.class)
                 .group(bossGroup, workerGroup)
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel ch) throws Exception {
-                        NettyCodecAdapter adapter = new NettyCodecAdapter();
-                        ch.pipeline()
-                                .addLast(new LoggingHandler())
-                                .addLast(new LengthFieldBasedFrameDecoder(65536, 0, 4, 0, 0))
-                                .addLast("decoder", adapter.getDecoder())
-                                .addLast("encoder", adapter.getEncoder())
-                                .addLast("nettyHandler", nettyHandler);
-                    }
-                });
+                .childHandler(new ChannelServerInitializer(nettyServerHandler));
         this.channel = bootstrap.bind(getBindAddress()).sync().channel();
     }
 

@@ -1,0 +1,2 @@
+com.lhf.dubbo.remoting.transport.netty.serializer.protostuff.Protostuff
+com.lhf.dubbo.remoting.transport.netty.serializer.hessian.Hessian

@@ -36,7 +36,13 @@
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.26" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-configuration-processor:2.3.7.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.alibaba:fastjson:1.2.74" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-all:4.1.55.Final" level="project" />
     <orderEntry type="library" name="Maven: org.projectlombok:lombok:1.18.16" level="project" />
+    <orderEntry type="library" name="Maven: com.caucho:hessian:4.0.63" level="project" />
+    <orderEntry type="library" name="Maven: com.dyuproject.protostuff:protostuff-core:1.0.8" level="project" />
+    <orderEntry type="library" name="Maven: com.dyuproject.protostuff:protostuff-api:1.0.8" level="project" />
+    <orderEntry type="library" name="Maven: com.dyuproject.protostuff:protostuff-runtime:1.0.8" level="project" />
+    <orderEntry type="library" name="Maven: com.dyuproject.protostuff:protostuff-collectionschema:1.0.8" level="project" />
     <orderEntry type="library" name="Maven: org.apache.curator:curator-framework:4.3.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.curator:curator-recipes:4.3.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.curator:curator-client:4.3.0" level="project" />
@@ -61,7 +67,6 @@
     <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.mojo:animal-sniffer-annotations:1.17" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
-    <orderEntry type="library" name="Maven: io.netty:netty-all:4.1.55.Final" level="project" />
     <orderEntry type="module" module-name="dubbo-registry-api" />
     <orderEntry type="module" module-name="dubbo-rpc-api" />
     <orderEntry type="module" module-name="dubbo-remoting-zookeeper" />

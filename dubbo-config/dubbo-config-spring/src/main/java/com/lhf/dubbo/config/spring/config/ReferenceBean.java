@@ -6,14 +6,18 @@ import com.lhf.dubbo.common.bean.URL;
 import com.lhf.dubbo.registry.zookeeper.RegistryProtocol;
 import com.lhf.dubbo.remoting.zookeeper.curator.RegistryConfig;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.lang.reflect.Field;
 
-public class ReferenceBean<T> implements ApplicationContextAware {
+public class ReferenceBean<T> implements ApplicationContextAware, InitializingBean, SmartInitializingSingleton {
     private RegistryProtocol registryProtocol;
     private RegistryConfig registryConfig;
+
+    private ApplicationContext applicationContext;
 
     public ReferenceBean(RegistryConfig registryConfig) {
         this.registryConfig = registryConfig;
@@ -21,20 +25,7 @@ public class ReferenceBean<T> implements ApplicationContextAware {
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         init();
-        for (String beanDefinitionName : applicationContext.getBeanDefinitionNames()) {
-            Object bean = applicationContext.getBean(beanDefinitionName);
-            for (Field field : bean.getClass().getDeclaredFields()) {
-                if(field.getAnnotation(RpcReference.class)!=null){
-                    field.setAccessible(true);
-                    try {
-                        Object proxy = registryProtocol.refer(field.getType(),generateUrl(field));
-                        field.set(bean,proxy);
-                    } catch (Throwable e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        }
+        this.applicationContext=applicationContext;
     }
 
     private URL generateUrl(Field field){
@@ -48,6 +39,30 @@ public class ReferenceBean<T> implements ApplicationContextAware {
     private void init() {
         if(registryProtocol==null){
             registryProtocol=new RegistryProtocol(registryConfig);
+        }
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("InitializingBean=>afterPropertiesSet");
+    }
+
+    @Override
+    public void afterSingletonsInstantiated() {
+        System.out.println("SmartInitializingSingleton=>afterSingletonsInstantiated");
+        for (String beanDefinitionName : applicationContext.getBeanDefinitionNames()) {
+            Object bean = applicationContext.getBean(beanDefinitionName);
+            for (Field field : bean.getClass().getDeclaredFields()) {
+                if(field.getAnnotation(RpcReference.class)!=null){
+                    field.setAccessible(true);
+                    try {
+                        Object proxy = registryProtocol.refer(field.getType(),generateUrl(field));
+                        field.set(bean,proxy);
+                    } catch (Throwable e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
         }
     }
 }

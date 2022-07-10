@@ -13,6 +13,11 @@ import java.net.InetSocketAddress;
 public class HeaderExchangeClient implements ExchangeClient {
     private Client client;
 
+    @Override
+    public Client getClient() {
+        return client;
+    }
+
     public HeaderExchangeClient(Client client) {
         this.client = client;
     }

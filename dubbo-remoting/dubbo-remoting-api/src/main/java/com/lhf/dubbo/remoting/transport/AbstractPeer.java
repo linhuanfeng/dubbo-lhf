@@ -3,7 +3,7 @@ package com.lhf.dubbo.remoting.transport;
 import com.lhf.dubbo.common.bean.URL;
 import com.lhf.dubbo.remoting.Channel;
 import com.lhf.dubbo.remoting.ChannelHandler;
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 
 
 /**
@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 @Deprecated
 public abstract class AbstractPeer implements /**Endpoint,**/ChannelHandler {
     private final ChannelHandler channelHandler;
-    private Logger logger=Logger.getLogger(AbstractPeer.class);
+//    private Logger logger=Logger.getLogger(AbstractPeer.class);
     private volatile URL url;
 
 
@@ -23,7 +23,7 @@ public abstract class AbstractPeer implements /**Endpoint,**/ChannelHandler {
 
     @Override
     public void sent(Object message) {
-        logger.info("要发送的消息是:"+message);
+//        logger.info("要发送的消息是:"+message);
     }
 
 
