@@ -4,4 +4,4 @@ dubbo:
   registry:
     connect-string: 192.168.42.100:2181,192.168.42.101:2181,192.168.42.102:2181
   protocol:
-    port: 9082
+    port: 9192

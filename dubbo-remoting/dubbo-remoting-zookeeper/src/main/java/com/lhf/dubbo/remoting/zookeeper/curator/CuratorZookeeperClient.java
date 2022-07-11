@@ -26,13 +26,14 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient {
         client.start();
     }
 
+    // 根据url进行服务发现,path:/root/interfaceName/version/provider
     public List<String> getChildrenData(String path) throws Exception {
-        List<String> list = client.getChildren().forPath(path);
-        List<String> serverList=new ArrayList<>(list.size());
+        List<String> list = client.getChildren().forPath(path); // 可用的服务端结点
+        List<String> serverInfoList=new ArrayList<>(list.size());
         for (String s : list) {
-            serverList.add(new String(client.getData().forPath(path + "/" + s)));
+            serverInfoList.add(new String(client.getData().forPath(path + "/" + s))); // 可用结点的data信息
         }
-        return serverList;
+        return serverInfoList;
     }
 
     @Override

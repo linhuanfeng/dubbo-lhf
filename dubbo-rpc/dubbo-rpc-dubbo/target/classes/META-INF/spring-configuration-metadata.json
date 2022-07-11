@@ -2,25 +2,25 @@
   "groups": [
     {
       "name": "dubbo.protocol",
-      "type": "com.lhf.dubbo.rpc.protocol.dubbo.ProtocolConfig",
-      "sourceType": "com.lhf.dubbo.rpc.protocol.dubbo.ProtocolConfig"
+      "type": "com.lhf.dubbo.rpc.protocol.dubbo.config.ProtocolConfig",
+      "sourceType": "com.lhf.dubbo.rpc.protocol.dubbo.config.ProtocolConfig"
     }
   ],
   "properties": [
     {
       "name": "dubbo.protocol.host",
       "type": "java.lang.String",
-      "sourceType": "com.lhf.dubbo.rpc.protocol.dubbo.ProtocolConfig"
+      "sourceType": "com.lhf.dubbo.rpc.protocol.dubbo.config.ProtocolConfig"
     },
     {
       "name": "dubbo.protocol.name",
       "type": "java.lang.String",
-      "sourceType": "com.lhf.dubbo.rpc.protocol.dubbo.ProtocolConfig"
+      "sourceType": "com.lhf.dubbo.rpc.protocol.dubbo.config.ProtocolConfig"
     },
     {
       "name": "dubbo.protocol.port",
       "type": "java.lang.Integer",
-      "sourceType": "com.lhf.dubbo.rpc.protocol.dubbo.ProtocolConfig"
+      "sourceType": "com.lhf.dubbo.rpc.protocol.dubbo.config.ProtocolConfig"
     }
   ],
   "hints": []

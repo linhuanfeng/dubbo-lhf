@@ -4,12 +4,11 @@ import com.lhf.dubbo.common.bean.URL;
 import com.lhf.dubbo.remoting.ChannelHandler;
 import com.lhf.dubbo.remoting.Client;
 
-import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public abstract class AbstractClient /**extends AbstractPeer**/ implements Client {
+public abstract class AbstractClient implements Client {
     protected volatile ExecutorService executor;
     private URL url;
     private ChannelHandler channelHandler;

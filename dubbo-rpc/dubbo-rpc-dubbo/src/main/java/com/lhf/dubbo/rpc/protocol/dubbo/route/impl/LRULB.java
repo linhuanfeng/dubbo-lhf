@@ -3,10 +3,10 @@ package com.lhf.dubbo.rpc.protocol.dubbo.route.impl;
 import com.lhf.dubbo.rpc.ProtocolClient;
 import com.lhf.dubbo.rpc.protocol.dubbo.route.LBEnum;
 import com.lhf.dubbo.rpc.protocol.dubbo.route.LoadBalance;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 // 基于linkedHashMap，但实际效果和轮询一致
@@ -21,6 +21,7 @@ public class LRULB implements LoadBalance {
 
     @Override
     public ProtocolClient select(String serviceKey,List<ProtocolClient> urlList) {
+        Assert.notEmpty(urlList,"urlList is null,serviceKey:"+serviceKey);
         LinkedHashMap<ProtocolClient, ProtocolClient> lruMap = serviceMap.get(serviceKey);
         if(lruMap==null){
             // 服务第一次访问进行初始化

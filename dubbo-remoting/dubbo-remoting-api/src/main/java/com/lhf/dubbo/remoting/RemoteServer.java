@@ -3,7 +3,7 @@ package com.lhf.dubbo.remoting;
 import java.net.InetSocketAddress;
 import java.util.Collection;
 
-public interface RemotingServer /**extends Endpoint**/{
+public interface RemoteServer /**extends Endpoint**/{
     /**
      * is bound.
      *

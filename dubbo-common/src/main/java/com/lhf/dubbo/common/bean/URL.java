@@ -1,18 +1,27 @@
 package com.lhf.dubbo.common.bean;
 
+import com.lhf.dubbo.common.config.HeartBeatConfig;
+import lombok.Data;
+import lombok.ToString;
+
 import java.io.Serializable;
+import java.util.UUID;
 
 import static com.lhf.dubbo.common.bean.CommonConstants.*;
 
+@Data
+@ToString
 public class URL implements Serializable {
-    String root="dubbo-lhf";
-    String interfaceName;
-    ServiceType type;
-    String serviceName; // 默认等于interfaceName
-    String version;
-    String host;
-    Integer port;
-
+    private String id=UUID.randomUUID().toString();
+    private String root="dubbo-lhf";
+    private String interfaceName;
+    private ServiceType type;
+    private String serviceName; // 默认等于interfaceName
+    private String version;
+    private String host;
+    private Integer port;
+    private HeartBeatConfig heartBeatConfig;
+    private Integer retries;
     public URL() {
     }
 
@@ -24,74 +33,5 @@ public class URL implements Serializable {
         this.version = version;
         this.host = host;
         this.port = port;
-    }
-
-    public String getRoot() {
-        return root;
-    }
-
-    public void setRoot(String root) {
-        this.root = root;
-    }
-
-    public ServiceType getType() {
-        return type;
-    }
-
-    public void setType(ServiceType type) {
-        this.type = type;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public Integer getPort() {
-        return port;
-    }
-
-    public void setPort(Integer port) {
-        this.port = port;
-    }
-
-    public String getInterfaceName() {
-        return interfaceName;
-    }
-
-    public void setInterfaceName(String interfaceName) {
-        this.interfaceName = interfaceName;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    @Override
-    public String toString() {
-        return "URL{" +
-                "root='" + root + '\'' +
-                ", interfaceName='" + interfaceName + '\'' +
-                ", type=" + type +
-                ", serviceName='" + serviceName + '\'' +
-                ", version='" + version + '\'' +
-                ", host='" + host + '\'' +
-                ", port=" + port +
-                '}';
     }
 }

@@ -1,7 +1,6 @@
 package com.lhf.dubbo.remoting.transport.netty;
 
-import com.lhf.dubbo.common.bean.Beat;
-import com.lhf.dubbo.remoting.transport.netty.support.ClientHeartBeatHandler;
+import com.lhf.dubbo.common.bean.URL;
 import com.lhf.dubbo.remoting.transport.netty.support.ServerHeartBeatHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -14,8 +13,10 @@ import java.util.concurrent.TimeUnit;
 
 public class ChannelServerInitializer extends ChannelInitializer<SocketChannel> {
     private NettyServerHandler nettyServerHandler;
-    public ChannelServerInitializer(NettyServerHandler nettyServerHandler) {
+    private URL url;
+    public ChannelServerInitializer(NettyServerHandler nettyServerHandler,URL url) {
         this.nettyServerHandler=nettyServerHandler;
+        this.url=url;
     }
 
     @Override
@@ -26,7 +27,7 @@ public class ChannelServerInitializer extends ChannelInitializer<SocketChannel> 
                 .addLast(new LengthFieldBasedFrameDecoder(65536, 0, 4, 0, 0))
                 .addLast("decoder", adapter.getDecoder(false))
                 .addLast("encoder", adapter.getEncoder(false))
-                .addLast("idle", new IdleStateHandler(0, 0, 4, TimeUnit.MILLISECONDS))
+                .addLast("idle", new IdleStateHandler(0, 0, url.getHeartBeatConfig().getBEAT_TIMEOUT(), TimeUnit.SECONDS))
                 .addLast("idleHandler", new ServerHeartBeatHandler())
                 .addLast("nettyHandler", nettyServerHandler);
     }

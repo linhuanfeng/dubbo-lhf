@@ -18,31 +18,41 @@ package com.lhf.dubbo.rpc.protocol.dubbo;
 
 import com.lhf.dubbo.common.bean.RpcFuture;
 import com.lhf.dubbo.common.bean.RpcRequest;
-import com.lhf.dubbo.common.bean.URL;
 import com.lhf.dubbo.remoting.Client;
-import com.lhf.dubbo.remoting.ExchangeClient;
-import com.lhf.dubbo.remoting.RemotingServer;
 import com.lhf.dubbo.rpc.ProtocolClient;
-import com.lhf.dubbo.rpc.ProtocolServer;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class DubboProtocolClient implements ProtocolClient {
 
-    private ExchangeClient exchangeClient; // headerExchangeClient
+//    private ExchangeClient exchangeClient; // headerExchangeClient
+    private Client client;
     private String address;
 
-    public RpcFuture send(RpcRequest message){
-        return exchangeClient.send(message);
+    @Override
+    public String getId() {
+        return null;
     }
 
-    public DubboProtocolClient(ExchangeClient exchangeClient) {
-        this.exchangeClient = exchangeClient;
+    public RpcFuture send(RpcRequest message){
+        return client.send(message);
     }
+
+//    public DubboProtocolClient(ExchangeClient exchangeClient) {
+//        this.exchangeClient = exchangeClient;
+//    }
+
+    public DubboProtocolClient(Client client) {
+        this.client = client;
+    }
+
+//    @Override
+//    public ExchangeClient getExchangeClient() {
+//        return exchangeClient;
+//    }
+
     @Override
-    public ExchangeClient getExchangeClient() {
-        return exchangeClient;
+    public Client getClient() {
+        return client;
     }
 
     @Override

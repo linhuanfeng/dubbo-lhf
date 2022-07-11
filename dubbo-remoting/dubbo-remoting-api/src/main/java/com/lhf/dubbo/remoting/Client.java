@@ -5,11 +5,8 @@ import com.lhf.dubbo.common.bean.RpcRequest;
 import com.lhf.dubbo.common.bean.RpcResponse;
 import io.netty.channel.Channel;
 
-public interface Client /**extends /**Endpoint,**/ /**Channel**/{
-    /**
-     * reconnect.
-     */
-    void reconnect() ;
+public interface Client {
+    String getId();
     RpcFuture send(RpcRequest message);
     Channel getChannel(); // 得到nettyChannel
 }

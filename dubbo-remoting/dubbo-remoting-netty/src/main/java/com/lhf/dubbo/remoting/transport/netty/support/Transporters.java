@@ -3,7 +3,7 @@ package com.lhf.dubbo.remoting.transport.netty.support;
 import com.lhf.dubbo.common.bean.URL;
 import com.lhf.dubbo.remoting.ChannelHandler;
 import com.lhf.dubbo.remoting.Client;
-import com.lhf.dubbo.remoting.RemotingServer;
+import com.lhf.dubbo.remoting.RemoteServer;
 import com.lhf.dubbo.remoting.Transporter;
 
 /**
@@ -11,7 +11,7 @@ import com.lhf.dubbo.remoting.Transporter;
  * 工具类：调用NettyTransporter. bind(URL,ChannelHandler)得到NettyServer对象
  */
 public class Transporters {
-    public static RemotingServer bind(String url, ChannelHandler handler) throws Throwable {
+    public static RemoteServer bind(String url, ChannelHandler handler) throws Throwable {
         URL url1 = new URL();
         return getTransporter(url1).bind(url1,handler);
     }
@@ -23,7 +23,7 @@ public class Transporters {
      * @param handler
      * @return
      */
-    public static RemotingServer bind(URL url,ChannelHandler handler) throws Throwable {
+    public static RemoteServer bind(URL url,ChannelHandler handler) throws Throwable {
         return getTransporter(url).bind(url,handler);
     }
 

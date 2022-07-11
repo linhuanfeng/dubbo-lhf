@@ -1,14 +1,12 @@
 package com.lhf.dubbo.rpc.protocol.dubbo;
 
 import com.lhf.dubbo.common.bean.*;
+import com.lhf.dubbo.common.config.HeartBeatConfig;
 import com.lhf.dubbo.common.utils.ProtocolUtils;
-import com.lhf.dubbo.remoting.Channel;
-import com.lhf.dubbo.remoting.Client;
-import com.lhf.dubbo.remoting.ExchangeClient;
-import com.lhf.dubbo.remoting.exchange.ExchangeHandler;
-import com.lhf.dubbo.remoting.exchange.ExchangeHandlerAdapter;
-import com.lhf.dubbo.remoting.transport.netty.NettyClient;
-import com.lhf.dubbo.remoting.transport.netty.support.Exchangers;
+import com.lhf.dubbo.remoting.*;
+import com.lhf.dubbo.remoting.transport.netty.retry.ExponentialBackOffRetry;
+import com.lhf.dubbo.remoting.transport.netty.retry.RetryPolicy;
+import com.lhf.dubbo.remoting.transport.netty.support.Transporters;
 import com.lhf.dubbo.rpc.*;
 import com.lhf.dubbo.rpc.protocol.AbstractProtocol;
 import com.lhf.dubbo.rpc.protocol.dubbo.route.LBExtension;
@@ -18,104 +16,146 @@ import org.springframework.cglib.proxy.InvocationHandler;
 import org.springframework.cglib.proxy.Proxy;
 import org.springframework.util.Assert;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.net.ConnectException;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class DubboProtocol extends AbstractProtocol {
+    // key(interfaceName+version) val(Exporter)
     private Map<String, Exporter<?>> exporterMap = new ConcurrentHashMap<>();
+    // key(requestId) val(RpcFuture)
     private Map<String, RpcFuture> pendingRpc = new ConcurrentHashMap<>();
     // 统一使用spi方式获取负载均衡器
     private LoadBalance loadBalance = LBExtension.getLoadBalance();
-    /**
-     * 通过requestHandler进行层与层之间的传递,
-     * 被多个netty连接共享，是否线程安全
-     */
-    private ExchangeHandler exchangeHandler = new ExchangeHandlerAdapter() {
-        @Override
-        public void connected(Channel channel) {
+    // key(URL.id) value(RetryPolicy)
+    private Map<String, RetryPolicy> retryPolicyMap = new ConcurrentHashMap<>();
 
-        }
-
-        @Override
-        public void disconnected(Channel channel) {
-            // channel断开，exporterMap移除可用连接，同时，考虑支持重连
-            log.info("channel:{}",channel.getChannel());
-
-        }
-
-        @Override
-        public void sent(Channel channel, Object message) {
-        }
-
-        @Override
-        public void received(Channel channel, Object message) {
-            Object result = reply(channel, message); // 处理消息
-            if (result != null) {
-                channel.sent(result); // 响应消息
+    private ChannelHandler getChannelHandler() {
+        return new AbstractChannelHandler() {
+            @Override
+            public Channel getChannel() {
+                return super.getChannel();
             }
-        }
 
-        @Override
-        public void caught(Channel channel, Throwable exception) {
+            @Override
+            public void setChannel(io.netty.channel.Channel channel) {
+                super.setChannel(channel);
+            }
 
-        }
+            @Override
+            public void connected(Channel channel) {
+                super.connected(channel);
+            }
 
-        @Override
-        public Object reply(Channel channel, Object message) {
-            if (message instanceof RpcResponse) {
-                RpcResponse rpcResponse = (RpcResponse) message;
+            @Override
+            public void reconnect(Channel channel) {
+
+            }
+
+            @Override
+            public void disconnected(Channel channel) {
+                super.disconnected(channel);
+                // 移除无效的client
+                removeOldProtocolClient(channel);
+                // 短线重连
+                channelReconnect(channel);
+            }
+
+            @Override
+            public void sent(Object message) {
+                super.sent(message);
+            }
+
+            @Override
+            public void sent(Channel channel, Object message) {
+                super.sent(channel, message);
+            }
+
+            @Override
+            public void received(Channel channel, Object message) {
+                Object result = reply(channel, message); // 处理消息
+                if (result != null) {
+                    channel.sent(result); // 响应消息
+                }
+            }
+
+            public Object reply(Channel channel, Object message) {
+                if (message instanceof RpcResponse) {
+                    RpcResponse rpcResponse = (RpcResponse) message;
 //                logger.debug("收到响应："+ rpcResponse);
-                RpcFuture rpcFuture = pendingRpc.get(rpcResponse.getRequestId());
-                if (rpcFuture != null) {
-                    pendingRpc.remove(rpcResponse.getRequestId());
-                    rpcFuture.setRpcResponse(rpcResponse);
-                } else {
+                    RpcFuture rpcFuture = pendingRpc.get(rpcResponse.getRequestId());
+                    if (rpcFuture != null) {
+                        pendingRpc.remove(rpcResponse.getRequestId());
+                        rpcFuture.setRpcResponse(rpcResponse);
+                    } else {
 //                    logger.debug("响应匹配失败："+ rpcResponse);
-                }
-            } else if (message instanceof RpcRequest) {
-                RpcRequest request = (RpcRequest) message;
-                if(Beat.BEAT_ID.equals(request.getRequestId())){
-                    log.info("channel:{},收到心跳，无需恢复",channel);
-                    return null;
-                }
+                    }
+                } else if (message instanceof RpcRequest) {
+                    RpcRequest request = (RpcRequest) message;
+                    if (HeartBeatConfig.BEAT_ID.equals(request.getRequestId())) {
+//                    log.info("channel:{},收到心跳，无需恢复",channel);
+                        return null;
+                    }
 //                logger.debug("收到请求："+ request);
-                Invoker<?> invoker = getInvoker(request);
-                Object res = invoker.invoke(request);
-                RpcResponse response = new RpcResponse();
-                response.setRequestId(request.getRequestId());
-                response.setResult(res);
-                return response;
-            } else {
+                    Invoker<?> invoker = getInvoker(request);
+                    Object res = invoker.invoke(request);
+                    RpcResponse response = new RpcResponse();
+                    response.setRequestId(request.getRequestId());
+                    response.setResult(res);
+                    return response;
+                } else {
 //                logger.debug("收到普通消息："+ message);
+                }
+                return null;
             }
-            return null;
-        }
-    };
 
-    private void channelReconnect(Channel channel){
-        log.info("channel断开，开启自动重连");
-        io.netty.channel.Channel nettyChannel = channel.getChannel();
-        URL url = channel.getUrl();
-        try {
-            // 移除旧数据
-            String clientKey=ProtocolUtils.serviceNodeKey(url);
-            List<ProtocolClient> clientList = protocolClientMap.get(clientKey);
-            for (ProtocolClient protocolClient : clientList) {
-                ExchangeClient exchangeClient = protocolClient.getExchangeClient();
-                Client client = exchangeClient.getClient(); // nettyClient
-                // 替换新的client
-//                client.
+            @Override
+            public void caught(Channel channel, Throwable exception) {
+                super.caught(channel, exception);
             }
-            // 重连
-            openClient(url);
-        } catch (Throwable e) {
-            log.error("netty连接异常");
+        };
+    }
+
+    // 短线自动重连
+    private void channelReconnect(Channel channel) {
+        try {
+            URL url = channel.getUrl();
+            RetryPolicy retryPolicy = retryPolicyMap.get(url.getId());
+            if (retryPolicy == null) {
+                retryPolicy = new ExponentialBackOffRetry(url.getRetries());
+                retryPolicyMap.put(url.getId(), retryPolicy);
+            }
+            if (retryPolicy.retry()) {
+                log.info("短线重连,第{}次尝试,service:{},channel:{}",
+                        retryPolicy.getCurRetries(),url.getInterfaceName() + "-" + url.getVersion(),
+                        channel.getChannel().remoteAddress());
+                openClient(url);
+            } else {
+                log.error("重连失败，curRetries:{} 达到 maxRetries:{}", retryPolicy.getCurRetries(), url.getRetries());
+            }
+        }catch (ConnectException e){
+            log.error("重连失败，远程服务器可能宕机或拒绝连接：{}",e.getMessage());
+        }catch (IOException e){
+            log.error(e.getMessage());
+        }
+        catch (Throwable e) {
+            log.error("重连失败，未知异常：{}",e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    private void removeOldProtocolClient(Channel channel) {
+        URL url = channel.getUrl();
+        // 移除旧数据
+        String clientKey = ProtocolUtils.serviceNodeKey(url);
+        Map<String, ProtocolClient> clientMap = protocolClientMap.get(clientKey);
+        if (clientMap == null) {
+            throw new ConcurrentModificationException("当前客户端被别人移除了");
+        }
+        clientMap.remove(channel.getId());
     }
 
     Invoker<?> getInvoker(RpcRequest request) {
@@ -140,7 +180,7 @@ public class DubboProtocol extends AbstractProtocol {
     @Override
     public <T> Exporter<T> export(Invoker<T> invoker) throws Throwable {
         URL url = invoker.getUrl();
-        // 开启netty服务
+        // 开启netty服务,如果有多个服务，创建一个服务器即可
         openServer(url);
         // 创建暴露对象
         Exporter<T> exporter = new DubboExporter<>(invoker);
@@ -161,7 +201,7 @@ public class DubboProtocol extends AbstractProtocol {
      */
     @Override
     public Object refer(Class type, List<URL> urls) throws Throwable {
-        Assert.notEmpty(urls, "没有找到对应的服务提供者：" + type);
+        Assert.notEmpty(urls, "找到可用的服务提供者：" + type);
         // 开启netty连接
         for (URL url : urls) {
             openClient(url);
@@ -185,36 +225,27 @@ public class DubboProtocol extends AbstractProtocol {
                 rpcRequest.setParameterTypes(method.getParameterTypes());
                 rpcRequest.setVersion(urls.get(0).getVersion());
                 // 负载均衡
-                List<ProtocolClient> protocolClients = protocolClientMap.get(ProtocolUtils.serviceNodeKey(urls.get(0)));
-                log.info("可用的客户端连接有{}个，", protocolClients.size());
-                RpcFuture rpcFuture = loadBalance.select(ProtocolUtils.exporterKey(urls.get(0).getInterfaceName(),urls.get(0).getVersion()),protocolClients).send(rpcRequest);
+                Collection<ProtocolClient> clients = protocolClientMap.get(ProtocolUtils.serviceNodeKey(urls.get(0))).values();
+                List<ProtocolClient> protocolClients=new ArrayList<>(clients.size());
+                Assert.notEmpty(clients, "找不到可用的服务提供者：" + type);
+                log.info("可用的客户端连接有{}个，", clients.size());
+                for (ProtocolClient protocolClient : clients) {
+                    protocolClients.add(protocolClient);
+                }
+                RpcFuture rpcFuture = loadBalance.select(
+                                ProtocolUtils.exporterKey(urls.get(0).getInterfaceName(), urls.get(0).getVersion()), protocolClients)
+                        .send(rpcRequest);
                 pendingRpc.put(rpcRequest.getRequestId(), rpcFuture);
                 return rpcFuture.get();
             }
         });
     }
 
-    /**
-     * 得到交换层的ExchangeServer对象
-     *
-     * @param url
-     * @return
-     */
     protected ProtocolServer createServer(URL url) throws Throwable {
-        if (exchangeServer == null) {
-            exchangeServer = Exchangers.bind(url, exchangeHandler);
-        }
-        if (protocolServer == null) {
-            protocolServer = new DubboProtocolServer(exchangeServer);
-        }
-        return protocolServer;
+        return new DubboProtocolServer(Transporters.bind(url, getChannelHandler()));
     }
 
     protected ProtocolClient createClient(URL url) {
-//        if (exchangeClient == null) {
-//            exchangeClient = Exchangers.connect(url, exchangeHandler);
-//        }
-        ProtocolClient protocolClient = new DubboProtocolClient(Exchangers.connect(url, exchangeHandler));
-        return protocolClient;
+        return new DubboProtocolClient(Transporters.connect(url, getChannelHandler()));
     }
 }

@@ -6,6 +6,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 
+/**
+ * 注册中心配置
+ */
 @ConfigurationProperties(prefix = "dubbo.registry")
 public class RegistryConfig {
     private String connectString = "127.0.0.1:2181";

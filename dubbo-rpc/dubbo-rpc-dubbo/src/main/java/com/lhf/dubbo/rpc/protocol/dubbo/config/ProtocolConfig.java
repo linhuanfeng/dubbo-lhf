@@ -1,4 +1,4 @@
-package com.lhf.dubbo.rpc.protocol.dubbo;
+package com.lhf.dubbo.rpc.protocol.dubbo.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

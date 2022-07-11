@@ -14,4 +14,9 @@ public class NettyChannel extends AbstractChannel {
     public static NettyChannel getOrAddChannel(io.netty.channel.Channel channel, URL url, ChannelHandler handler) {
         return new NettyChannel(channel,url,handler);
     }
+
+    @Override
+    public String getId() {
+        return getChannel().id().asShortText();
+    }
 }

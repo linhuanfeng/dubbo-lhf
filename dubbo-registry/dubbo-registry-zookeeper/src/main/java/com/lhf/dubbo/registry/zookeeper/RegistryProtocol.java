@@ -14,8 +14,7 @@ import java.util.List;
  * 注册中心对象，负责服务注册和暴露，调用DubboProtocol进行服务暴露
  */
 public class RegistryProtocol implements Protocol {
-    // dubboProtocol
-    private Protocol dubboProtocol;
+    private Protocol dubboProtocol; // 可共用
     private Registry registry;
 
     private RegistryConfig registryConfig;
@@ -100,6 +99,10 @@ public class RegistryProtocol implements Protocol {
     @Override
     public Object refer(Class type, URL url) throws Throwable{
         List<URL> providerUrls = getProviderUrls(url);
+        for (URL providerUrl : providerUrls) {
+            providerUrl.setRetries(url.getRetries());  // 以注解的重试次数为准
+            providerUrl.setHeartBeatConfig(url.getHeartBeatConfig());
+        }
         if(dubboProtocol==null){
             dubboProtocol = new DubboProtocol();
         }

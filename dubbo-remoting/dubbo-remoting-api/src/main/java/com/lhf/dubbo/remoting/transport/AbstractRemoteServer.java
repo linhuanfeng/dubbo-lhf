@@ -1,20 +1,17 @@
 package com.lhf.dubbo.remoting.transport;
 
 import com.lhf.dubbo.common.bean.URL;
-import com.lhf.dubbo.remoting.Channel;
 import com.lhf.dubbo.remoting.ChannelHandler;
-import com.lhf.dubbo.remoting.RemotingServer;
+import com.lhf.dubbo.remoting.RemoteServer;
 
 import java.net.InetSocketAddress;
-import java.util.Collection;
-import java.util.concurrent.ExecutorService;
 
-public abstract class AbstractServer /**extends AbstractEndpoint**/ implements RemotingServer {
+public abstract class AbstractRemoteServer /**extends AbstractEndpoint**/ implements RemoteServer {
     private InetSocketAddress bindAddress;
 //    private ExecutorService executor;
     private URL url;
     private ChannelHandler channelHandler;
-    public AbstractServer(URL url, ChannelHandler channelHandler) throws Throwable {
+    public AbstractRemoteServer(URL url, ChannelHandler channelHandler) throws Throwable {
 //        super(url, handler);
         this.url=url;
         this.channelHandler=channelHandler;
