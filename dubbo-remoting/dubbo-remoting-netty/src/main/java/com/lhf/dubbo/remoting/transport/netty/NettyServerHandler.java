@@ -50,7 +50,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         super.channelRead(ctx, msg);
-        channelHandler.received(NettyChannel.getOrAddChannel(ctx.channel(), url, channelHandler),msg);
+        channelHandler.received(NettyChannel.getChannel(ctx.channel(), url, channelHandler),msg);
     }
 
     @Override

@@ -2,16 +2,16 @@ package com.lhf.dubbo.remoting;
 
 import com.lhf.dubbo.common.bean.URL;
 
-import java.net.InetSocketAddress;
 
-public interface Channel /**extends Endpoint**/{
-    String getId(); // 唯一标识，方便后续识别channel并删除旧channel
+/**
+ * 对nettyChannel的封装
+ */
+public interface Channel {
     /**
-     * get remote address.
-     *
-     * @return remote address.
+     * nettyChannel的id，方便后续识别channel并删除旧channel
+     * @return
      */
-//    InetSocketAddress getRemoteAddress();
+    String getId();
 
     /**
      * is connected.

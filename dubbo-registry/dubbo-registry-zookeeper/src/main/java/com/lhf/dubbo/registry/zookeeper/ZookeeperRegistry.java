@@ -1,6 +1,7 @@
 package com.lhf.dubbo.registry.zookeeper;
 
 import com.lhf.dubbo.common.bean.URL;
+import com.lhf.dubbo.common.bean.registry.UpdateServerListCallBack;
 import com.lhf.dubbo.common.utils.JsonUtil;
 import com.lhf.dubbo.common.utils.ProtocolUtils;
 import com.lhf.dubbo.registry.Registry;
@@ -26,10 +27,14 @@ public class ZookeeperRegistry implements Registry {
     public void register(URL url){
         zkClient.create(ProtocolUtils.serviceKey(url), JsonUtil.ObjectToJson(url),true);
     }
-    // 服务发现
+    /**
+     * 服务发现
+     * 那么如何服务动态更新呢
+      */
     @Override
-    public List<URL> discovery(URL url) throws Exception {
-        List<String> services = zkClient.getChildrenData(ProtocolUtils.serviceKeyParent(url));
+    public List<URL> discovery(URL url, UpdateServerListCallBack updateServerListCallBack) throws Exception {
+//        List<String> services = zkClient.getChildrenData(ProtocolUtils.serviceKeyParent(url));
+        List<String> services = zkClient.getChildrenDataCache(ProtocolUtils.serviceKeyParent(url),updateServerListCallBack);
         return services.stream().map(s->JsonUtil.JsonToObject(s,URL.class)).collect(Collectors.toList());
     }
 

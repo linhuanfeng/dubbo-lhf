@@ -4,34 +4,17 @@ package com.lhf.dubbo.remoting;
  * 对netty的channelhandler进一步封装
  */
 public interface ChannelHandler {
+    void setChannel(Channel channel);
     Channel getChannel();
-    void setChannel(io.netty.channel.Channel channel);
+//    io.netty.channel.Channel getChannel();
     /**
      * on channel connected.
      *
      * @param channel channel.
      */
-    void connected(Channel channel) ;
+//    void connected(Channel channel) ;
 
-    void reconnect(Channel channel);
-
-    /**
-     * on channel disconnected.
-     *
-     * @param channel channel.
-     */
-    void disconnected(Channel channel) ;
-
-    void sent(Object message);
-
-    /**
-     * on message sent.
-     *
-     * @param channel channel.
-     * @param message message.
-     */
-    void sent(Channel channel, Object message) ;
-
+//    void reconnect(Channel channel);
     /**
      * on message received.
      *
@@ -39,6 +22,12 @@ public interface ChannelHandler {
      * @param message message.
      */
     void received(Channel channel, Object message);
+    /**
+     * on channel disconnected.
+     *
+     * @param channel channel.
+     */
+    void disconnected(Channel channel) ;
 
     /**
      * on exception caught.
@@ -46,6 +35,6 @@ public interface ChannelHandler {
      * @param channel   channel.
      * @param exception exception.
      */
-    void caught(Channel channel, Throwable exception) ;
+//    void caught(Channel channel, Throwable exception) ;
 
 }

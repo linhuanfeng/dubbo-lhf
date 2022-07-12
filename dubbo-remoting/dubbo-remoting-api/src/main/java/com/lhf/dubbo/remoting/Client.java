@@ -6,7 +6,7 @@ import com.lhf.dubbo.common.bean.RpcResponse;
 import io.netty.channel.Channel;
 
 public interface Client {
-    String getId();
+    String getId(); // nettyChannelId
     RpcFuture send(RpcRequest message);
     Channel getChannel(); // 得到nettyChannel
 }

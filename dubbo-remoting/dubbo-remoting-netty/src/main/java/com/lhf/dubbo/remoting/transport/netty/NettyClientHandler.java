@@ -19,7 +19,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler {
     }
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        handler.received(NettyChannel.getOrAddChannel(ctx.channel(),url,handler),msg);
+        handler.received(NettyChannel.getChannel(ctx.channel(),url,handler),msg);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
         log.info("连接成功，可处理IO请求...，channel active:{},",ctx.channel().remoteAddress());
-        handler.setChannel(ctx.channel());
+        handler.setChannel(NettyChannel.getChannel(ctx.channel(),url,handler));
     }
 
     @Override
@@ -44,7 +44,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler {
         super.channelInactive(ctx);
         log.info("连接断开，channel Inactive：{}",ctx.channel().remoteAddress());
         // 断开连接时间传递
-        handler.disconnected(NettyChannel.getOrAddChannel(ctx.channel(),url,handler));
+        handler.disconnected(handler.getChannel());
     }
 
     @Override

@@ -54,11 +54,7 @@ public class ServiceBean implements ApplicationContextAware {
                         }
                     }
                 };
-                try {
-                    registryProtocol.export(invoker);
-                } catch (Throwable throwable) {
-                    throwable.printStackTrace();
-                }
+                registryProtocol.export(invoker);
             }
         }
     }
@@ -85,7 +81,7 @@ public class ServiceBean implements ApplicationContextAware {
 //        if (rpcService.beatTimeout()!=-1){
 //            beatConfig.setBEAT_TIMEOUT(rpcService.beatTimeout());
 //        }
-            url.setHeartBeatConfig(beatConfig);
+        url.setHeartBeatConfig(beatConfig);
         return url;
     }
 

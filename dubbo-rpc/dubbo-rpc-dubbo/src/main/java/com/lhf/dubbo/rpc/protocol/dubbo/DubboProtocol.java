@@ -8,7 +8,7 @@ import com.lhf.dubbo.remoting.transport.netty.retry.ExponentialBackOffRetry;
 import com.lhf.dubbo.remoting.transport.netty.retry.RetryPolicy;
 import com.lhf.dubbo.remoting.transport.netty.support.Transporters;
 import com.lhf.dubbo.rpc.*;
-import com.lhf.dubbo.rpc.protocol.AbstractProtocol;
+import com.lhf.dubbo.rpc.protocol.AbstractDubboProtocol;
 import com.lhf.dubbo.rpc.protocol.dubbo.route.LBExtension;
 import com.lhf.dubbo.rpc.protocol.dubbo.route.LoadBalance;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class DubboProtocol extends AbstractProtocol {
+public class DubboProtocol extends AbstractDubboProtocol {
     // key(interfaceName+version) val(Exporter)
     private Map<String, Exporter<?>> exporterMap = new ConcurrentHashMap<>();
     // key(requestId) val(RpcFuture)
@@ -36,42 +36,11 @@ public class DubboProtocol extends AbstractProtocol {
     private ChannelHandler getChannelHandler() {
         return new AbstractChannelHandler() {
             @Override
-            public Channel getChannel() {
-                return super.getChannel();
-            }
-
-            @Override
-            public void setChannel(io.netty.channel.Channel channel) {
-                super.setChannel(channel);
-            }
-
-            @Override
-            public void connected(Channel channel) {
-                super.connected(channel);
-            }
-
-            @Override
-            public void reconnect(Channel channel) {
-
-            }
-
-            @Override
             public void disconnected(Channel channel) {
-                super.disconnected(channel);
                 // 移除无效的client
-                removeOldProtocolClient(channel);
+                removeInvalidProtocolClient(channel);
                 // 短线重连
                 channelReconnect(channel);
-            }
-
-            @Override
-            public void sent(Object message) {
-                super.sent(message);
-            }
-
-            @Override
-            public void sent(Channel channel, Object message) {
-                super.sent(channel, message);
             }
 
             @Override
@@ -111,15 +80,10 @@ public class DubboProtocol extends AbstractProtocol {
                 }
                 return null;
             }
-
-            @Override
-            public void caught(Channel channel, Throwable exception) {
-                super.caught(channel, exception);
-            }
         };
     }
 
-    // 短线自动重连
+    // 短线自动重连,多个ChannelHandler公用一个
     private void channelReconnect(Channel channel) {
         try {
             URL url = channel.getUrl();
@@ -147,7 +111,7 @@ public class DubboProtocol extends AbstractProtocol {
         }
     }
 
-    private void removeOldProtocolClient(Channel channel) {
+    private void removeInvalidProtocolClient(Channel channel) {
         URL url = channel.getUrl();
         // 移除旧数据
         String clientKey = ProtocolUtils.serviceNodeKey(url);
@@ -202,7 +166,7 @@ public class DubboProtocol extends AbstractProtocol {
     @Override
     public Object refer(Class type, List<URL> urls) throws Throwable {
         Assert.notEmpty(urls, "找到可用的服务提供者：" + type);
-        // 开启netty连接
+        // 开启netty连接，把连接对象放入protocolClientMap中
         for (URL url : urls) {
             openClient(url);
         }
