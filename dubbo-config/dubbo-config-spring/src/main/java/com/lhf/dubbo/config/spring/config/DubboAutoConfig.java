@@ -1,6 +1,6 @@
 package com.lhf.dubbo.config.spring.config;
 
-import com.lhf.dubbo.remoting.zookeeper.curator.RegistryConfig;
+import com.lhf.dubbo.registry.RegistryConfig;
 import com.lhf.dubbo.rpc.protocol.dubbo.config.ProtocolConfig;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

@@ -6,7 +6,10 @@ import java.util.List;
 
 
 /**
- * 封装 RPC 调用，以 Invocation, Result 为中心
+ * 协议层，封装 RPC 调用，以 Invocation, Result 为中心
+ * 负载均衡等
+ *
+ *
  */
 public interface Protocol {
     /**

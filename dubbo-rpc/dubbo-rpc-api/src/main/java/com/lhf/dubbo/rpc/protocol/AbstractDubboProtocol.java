@@ -14,7 +14,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public abstract class AbstractDubboProtocol implements Protocol {
 
-    // key(interfaceName-version) value(Map(clientId,ProtocolClient))
+    /**
+     * key(interfaceName-version) value(Map(clientId,ProtocolClient))
+     * 服务标识key，对应的所有实例(channelId,ProtocolClient)
+      */
     protected Map<String,Map<String,ProtocolClient>> protocolClientMap=new ConcurrentHashMap<>();
     private AtomicBoolean serverStarted=new AtomicBoolean();
     // 单线程的线程池，负责更新服务列表，无并发问题
@@ -72,11 +75,15 @@ public abstract class AbstractDubboProtocol implements Protocol {
 
     protected void openClient(URL url) throws Throwable {
         log.info("创建netty连接中：{}",url.getInterfaceName()+"-"+url.getVersion()+"-"+url.getPort());
-        ProtocolClient protocolClient=createClient(url); // 创建netty连接
-        String clientKey=ProtocolUtils.serviceNodeKey(url); // interfaceName-version
-        Map<String, ProtocolClient> clientMap = protocolClientMap.getOrDefault(clientKey, new ConcurrentHashMap<>());
+        // 创建netty连接(客户端)
+        ProtocolClient protocolClient=createClient(url);
+        // 获取服务标识key
+        String serviceNodeKey=ProtocolUtils.serviceNodeKey(url); // interfaceName-version
+        // 得到服务Key对应所有实例
+        Map<String, ProtocolClient> clientMap = protocolClientMap.getOrDefault(serviceNodeKey, new ConcurrentHashMap<>());
+        // 添加新实例
         clientMap.put(protocolClient.getClient().getId(),protocolClient);
-        protocolClientMap.put(clientKey,clientMap);
+        protocolClientMap.put(serviceNodeKey,clientMap);
     }
 
     protected abstract ProtocolServer createServer(URL url) throws Throwable;

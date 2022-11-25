@@ -7,6 +7,12 @@ import io.netty.channel.Channel;
 
 public interface Client {
     String getId(); // nettyChannelId
+
+    /**
+     * 发送rpc请求
+     * @param message
+     * @return
+     */
     RpcFuture send(RpcRequest message);
     Channel getChannel(); // 得到nettyChannel
 }

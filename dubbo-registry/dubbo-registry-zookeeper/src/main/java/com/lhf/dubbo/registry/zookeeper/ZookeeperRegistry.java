@@ -5,9 +5,9 @@ import com.lhf.dubbo.common.bean.registry.UpdateServerListCallBack;
 import com.lhf.dubbo.common.utils.JsonUtil;
 import com.lhf.dubbo.common.utils.ProtocolUtils;
 import com.lhf.dubbo.registry.Registry;
-import com.lhf.dubbo.remoting.zokeeper.ZookeeperClient;
-import com.lhf.dubbo.remoting.zookeeper.curator.CuratorZookeeperClient;
-import com.lhf.dubbo.remoting.zookeeper.curator.RegistryConfig;
+import com.lhf.dubbo.registry.zookeeper.zokeeper.ZookeeperClient;
+import com.lhf.dubbo.registry.zookeeper.support.CuratorZookeeperClient;
+import com.lhf.dubbo.registry.RegistryConfig;
 
 import java.util.List;
 import java.util.stream.Collectors;

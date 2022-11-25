@@ -3,7 +3,7 @@ package com.lhf.dubbo.registry.zookeeper;
 import com.lhf.dubbo.common.bean.URL;
 import com.lhf.dubbo.common.bean.registry.UpdateServerListCallBack;
 import com.lhf.dubbo.registry.Registry;
-import com.lhf.dubbo.remoting.zookeeper.curator.RegistryConfig;
+import com.lhf.dubbo.registry.RegistryConfig;
 import com.lhf.dubbo.rpc.Exporter;
 import com.lhf.dubbo.rpc.Invoker;
 import com.lhf.dubbo.rpc.Protocol;

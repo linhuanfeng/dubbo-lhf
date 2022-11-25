@@ -6,11 +6,10 @@ import com.lhf.dubbo.common.bean.ServiceType;
 import com.lhf.dubbo.common.bean.URL;
 import com.lhf.dubbo.common.config.HeartBeatConfig;
 import com.lhf.dubbo.registry.zookeeper.RegistryProtocol;
-import com.lhf.dubbo.remoting.zookeeper.curator.RegistryConfig;
+import com.lhf.dubbo.registry.RegistryConfig;
 import com.lhf.dubbo.rpc.protocol.dubbo.config.ProtocolConfig;
 import com.lhf.dubbo.rpc.proxy.AbstractProxyInvoker;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.CollectionUtils;
@@ -34,6 +33,12 @@ public class ServiceBean implements ApplicationContextAware {
         this.serviceConfig = serviceConfig;
     }
 
+    /**
+     * 动态代理，方法拦截，封装成rpc请求，进行调用
+     * @param applicationContext the ApplicationContext object to be used by this object
+     * @throws BeansException
+     */
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         init();
         Map<String, Object> serviceMap = applicationContext.getBeansWithAnnotation(RpcService.class);

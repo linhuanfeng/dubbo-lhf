@@ -14,6 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
 
+/**
+ * 组合io.netty.channel对象
+ */
 @Slf4j
 public class NettyClient extends AbstractClient {
     private Bootstrap bootstrap;
@@ -52,11 +55,20 @@ public class NettyClient extends AbstractClient {
         return new NettyClientHandler(getUrl(), getHandler());
     }
 
+    /**
+     * 返回io.netty.channel对应的id
+     * @return
+     */
     @Override
     public String getId() {
         return channel.id().asShortText();
     }
 
+    /**
+     * 调用channel.writeAndFlush
+     * @param request
+     * @return
+     */
     @Override
     public RpcFuture send(RpcRequest request) {
         RpcFuture rpcFuture = new RpcFuture(request);

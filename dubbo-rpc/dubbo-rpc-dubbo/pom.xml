@@ -12,22 +12,10 @@
     <artifactId>dubbo-rpc-dubbo</artifactId>
 
     <dependencies>
-        <!--common-->
-        <dependency>
-            <groupId>com.lhf.dubbo</groupId>
-            <artifactId>dubbo-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
         <!--rpc-api-->
         <dependency>
             <groupId>com.lhf.dubbo</groupId>
             <artifactId>dubbo-rpc-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <!--remoting-api-->
-        <dependency>
-            <groupId>com.lhf.dubbo</groupId>
-            <artifactId>dubbo-remoting-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <!--remoting-api-->

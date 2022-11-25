@@ -51,7 +51,7 @@ public class ProtocolUtils {
 //        return url.getHost()+url.getPort();
 //    }
 
-    // 保存服务端netty连接的key
+    // 服务标识key
     public static String serviceNodeKey(URL url){
         return url.getInterfaceName()+"-"+url.getVersion();
     }

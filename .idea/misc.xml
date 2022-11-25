@@ -15,6 +15,7 @@
       <set>
         <option value="$PROJECT_DIR$/dubbo-all/pom.xml" />
         <option value="$PROJECT_DIR$/dubbo-client/pom.xml" />
+        <option value="$PROJECT_DIR$/dubbo-remoting/dubbo-remoting-zookeeper/pom.xml" />
         <option value="$PROJECT_DIR$/dubbo-server/pom.xml" />
       </set>
     </option>

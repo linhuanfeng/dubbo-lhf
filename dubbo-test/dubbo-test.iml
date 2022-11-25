@@ -26,6 +26,11 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="dubbo-config-spring" />
+    <orderEntry type="module" module-name="dubbo-config-api" />
+    <orderEntry type="module" module-name="dubbo-registry-zookeeper" />
+    <orderEntry type="module" module-name="dubbo-registry-api" />
+    <orderEntry type="module" module-name="dubbo-rpc-api" />
+    <orderEntry type="module" module-name="dubbo-remoting-api" />
     <orderEntry type="module" module-name="dubbo-common" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-configuration-processor:2.3.7.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.alibaba:fastjson:1.2.74" level="project" />
@@ -59,14 +64,8 @@
     <orderEntry type="library" name="Maven: com.google.errorprone:error_prone_annotations:2.2.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.mojo:animal-sniffer-annotations:1.17" level="project" />
-    <orderEntry type="module" module-name="dubbo-config-api" />
     <orderEntry type="module" module-name="dubbo-rpc-dubbo" />
-    <orderEntry type="module" module-name="dubbo-rpc-api" />
-    <orderEntry type="module" module-name="dubbo-remoting-api" />
     <orderEntry type="module" module-name="dubbo-remoting-netty" />
-    <orderEntry type="module" module-name="dubbo-registry-zookeeper" />
-    <orderEntry type="module" module-name="dubbo-registry-api" />
-    <orderEntry type="module" module-name="dubbo-remoting-zookeeper" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter:2.3.7.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:2.3.7.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-context:5.2.12.RELEASE" level="project" />

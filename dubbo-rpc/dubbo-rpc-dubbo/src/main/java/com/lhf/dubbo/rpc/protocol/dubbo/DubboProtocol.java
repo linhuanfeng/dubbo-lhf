@@ -33,6 +33,10 @@ public class DubboProtocol extends AbstractDubboProtocol {
     // key(URL.id) value(RetryPolicy)
     private Map<String, RetryPolicy> retryPolicyMap = new ConcurrentHashMap<>();
 
+    /**
+     * 负责读写请求
+     * @return
+     */
     private ChannelHandler getChannelHandler() {
         return new AbstractChannelHandler() {
             @Override
@@ -83,7 +87,11 @@ public class DubboProtocol extends AbstractDubboProtocol {
         };
     }
 
-    // 短线自动重连,多个ChannelHandler公用一个
+    /**
+     * 利用channel的生命周期函数
+     * 实现短线自动重连,多个ChannelHandler公用一个
+     *
+     */
     private void channelReconnect(Channel channel) {
         try {
             URL url = channel.getUrl();
@@ -114,8 +122,8 @@ public class DubboProtocol extends AbstractDubboProtocol {
     private void removeInvalidProtocolClient(Channel channel) {
         URL url = channel.getUrl();
         // 移除旧数据
-        String clientKey = ProtocolUtils.serviceNodeKey(url);
-        Map<String, ProtocolClient> clientMap = protocolClientMap.get(clientKey);
+        String serviceNodeKey = ProtocolUtils.serviceNodeKey(url);
+        Map<String, ProtocolClient> clientMap = protocolClientMap.get(serviceNodeKey);
         if (clientMap == null) {
             throw new ConcurrentModificationException("当前客户端被别人移除了");
         }
@@ -165,12 +173,12 @@ public class DubboProtocol extends AbstractDubboProtocol {
      */
     @Override
     public Object refer(Class type, List<URL> urls) throws Throwable {
-        Assert.notEmpty(urls, "找到可用的服务提供者：" + type);
+        Assert.notEmpty(urls, "找不到可用的服务提供者：" + type);
         // 开启netty连接，把连接对象放入protocolClientMap中
         for (URL url : urls) {
             openClient(url);
         }
-        // 服务代理，调用远程服务
+        // 使用cglib创建代理对象，屏蔽远程调用的代价
         return Proxy.newProxyInstance(type.getClassLoader(), new Class[]{type}, new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -196,9 +204,11 @@ public class DubboProtocol extends AbstractDubboProtocol {
                 for (ProtocolClient protocolClient : clients) {
                     protocolClients.add(protocolClient);
                 }
-                RpcFuture rpcFuture = loadBalance.select(
-                                ProtocolUtils.exporterKey(urls.get(0).getInterfaceName(), urls.get(0).getVersion()), protocolClients)
-                        .send(rpcRequest);
+                // 负载均衡选择客户端进行发送
+                ProtocolClient client = loadBalance.select(
+                        ProtocolUtils.exporterKey(urls.get(0).getInterfaceName(), urls.get(0).getVersion()), protocolClients);
+                // 将rpcFuture对象存起来,key为请求的唯一标识
+                RpcFuture rpcFuture = client.send(rpcRequest);
                 pendingRpc.put(rpcRequest.getRequestId(), rpcFuture);
                 return rpcFuture.get();
             }

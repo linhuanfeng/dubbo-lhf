@@ -15,7 +15,6 @@
       <module fileurl="file://$PROJECT_DIR$/dubbo-remoting/dubbo-remoting.iml" filepath="$PROJECT_DIR$/dubbo-remoting/dubbo-remoting.iml" />
       <module fileurl="file://$PROJECT_DIR$/dubbo-remoting/dubbo-remoting-api/dubbo-remoting-api.iml" filepath="$PROJECT_DIR$/dubbo-remoting/dubbo-remoting-api/dubbo-remoting-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/dubbo-remoting/dubbo-remoting-netty/dubbo-remoting-netty.iml" filepath="$PROJECT_DIR$/dubbo-remoting/dubbo-remoting-netty/dubbo-remoting-netty.iml" />
-      <module fileurl="file://$PROJECT_DIR$/dubbo-remoting/dubbo-remoting-zookeeper/dubbo-remoting-zookeeper.iml" filepath="$PROJECT_DIR$/dubbo-remoting/dubbo-remoting-zookeeper/dubbo-remoting-zookeeper.iml" />
       <module fileurl="file://$PROJECT_DIR$/dubbo-rpc/dubbo-rpc.iml" filepath="$PROJECT_DIR$/dubbo-rpc/dubbo-rpc.iml" />
       <module fileurl="file://$PROJECT_DIR$/dubbo-rpc/dubbo-rpc-api/dubbo-rpc-api.iml" filepath="$PROJECT_DIR$/dubbo-rpc/dubbo-rpc-api/dubbo-rpc-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/dubbo-rpc/dubbo-rpc-dubbo/dubbo-rpc-dubbo.iml" filepath="$PROJECT_DIR$/dubbo-rpc/dubbo-rpc-dubbo/dubbo-rpc-dubbo.iml" />

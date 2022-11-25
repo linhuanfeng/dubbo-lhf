@@ -13,7 +13,6 @@
     <modules>
         <module>dubbo-remoting-api</module>
         <module>dubbo-remoting-netty</module>
-        <module>dubbo-remoting-zookeeper</module>
     </modules>
 <!--    <build>-->
 <!--        <plugins>-->

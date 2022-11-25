@@ -7,6 +7,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 
+/**
+ * 如何超时控制？
+ * 所有rpcFuture的时间设置在一个map中
+ * 采用一个线程，不断轮询map的状态，如何超时了，就唤醒rpcFuture，设置超时结果
+ * 如果超时，在考虑重试
+ */
 public class RpcFuture implements Future<Object>, Serializable {
     private final RpcRequest rpcRequest;
     private RpcResponse rpcResponse;
@@ -58,6 +64,13 @@ public class RpcFuture implements Future<Object>, Serializable {
         return syn.isSignalled();
     }
 
+    /**
+     * 如何异步获取结果？基于
+     * 一个线程tryAcquire获取数据，state不够，所以阻塞
+     * aqs 重写tryAcquire之类实现，设置state状态，
+     * @return
+     * @throws InterruptedException
+     */
     public Object get() throws InterruptedException {
         syn.acquireSharedInterruptibly(1); // 可中断共享获取资源
         if(rpcResponse!=null){

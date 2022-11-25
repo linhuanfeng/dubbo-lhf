@@ -17,7 +17,6 @@
         <module name="client-test" />
         <module name="dubbo-config-api" />
         <module name="server-test" />
-        <module name="dubbo-remoting-zookeeper" />
         <module name="dubbo-rpc-api" />
         <module name="dubbo-config-spring" />
         <module name="dubbo-registry-zookeeper" />

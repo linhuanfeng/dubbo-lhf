@@ -2,7 +2,6 @@ package com.lhf.dubbo.remoting.transport.netty;
 
 import com.lhf.dubbo.common.bean.URL;
 import com.lhf.dubbo.remoting.ChannelHandler;
-import com.lhf.dubbo.rpc.RpcInvocation;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;

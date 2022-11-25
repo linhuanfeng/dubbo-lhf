@@ -5,9 +5,8 @@ import com.lhf.dubbo.common.bean.ServiceType;
 import com.lhf.dubbo.common.bean.URL;
 import com.lhf.dubbo.common.config.HeartBeatConfig;
 import com.lhf.dubbo.registry.zookeeper.RegistryProtocol;
-import com.lhf.dubbo.remoting.zookeeper.curator.RegistryConfig;
+import com.lhf.dubbo.registry.RegistryConfig;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -49,6 +48,10 @@ public class ReferenceBean<T> implements ApplicationContextAware, SmartInitializ
         return url;
     }
 
+    /**
+     * 如何创建代理对象：
+     * 从容器中拿对象，如果有字段标注了该属性，利用反射进行属性注入
+     */
     @Override
     public void afterSingletonsInstantiated() {
         for (String beanDefinitionName : applicationContext.getBeanDefinitionNames()) {

@@ -13,11 +13,6 @@
 
     <dependencies>
         <dependency>
-            <artifactId>dubbo-common</artifactId>
-            <groupId>com.lhf.dubbo</groupId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <artifactId>dubbo-remoting-api</artifactId>
             <groupId>com.lhf.dubbo</groupId>
             <version>1.0-SNAPSHOT</version>
