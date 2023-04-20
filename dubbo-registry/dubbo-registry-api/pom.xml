@@ -17,11 +17,5 @@
             <artifactId>dubbo-rpc-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <!--rpc-api-->
-        <dependency>
-            <groupId>com.lhf.dubbo</groupId>
-            <artifactId>dubbo-rpc-dubbo</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 </project>

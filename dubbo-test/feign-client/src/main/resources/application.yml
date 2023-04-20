@@ -1,0 +1,11 @@
+host1: 127.0.0.1
+host2: 192.168.42.102
+spring:
+  application:
+    name: feign-client
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${host1}:8848
+server:
+  port: 8028

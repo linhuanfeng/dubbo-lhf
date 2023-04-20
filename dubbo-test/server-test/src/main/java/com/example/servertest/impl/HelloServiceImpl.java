@@ -8,6 +8,7 @@ import com.lhf.dubbo.common.annotation.RpcService;
 public class HelloServiceImpl implements HelloService {
     @Override
     public String sayHello(String name) {
+        System.out.println(name);
         return "1111你好:"+name;
     }
 }

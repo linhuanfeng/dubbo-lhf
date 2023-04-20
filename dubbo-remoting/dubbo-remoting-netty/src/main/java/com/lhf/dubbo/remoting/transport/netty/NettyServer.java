@@ -49,8 +49,8 @@ public class NettyServer extends AbstractRemoteServer {
 
     @Override
     protected void doOpen() throws InterruptedException {
-        bossGroup = new NioEventLoopGroup(2);
-        workerGroup = new NioEventLoopGroup(2);
+        bossGroup = new NioEventLoopGroup(16);
+        workerGroup = new NioEventLoopGroup(16);
         bootstrap = new ServerBootstrap();
         // NettyHandler持有ChannelHandler,ChannelHandler是各层之间消息传送的中介
         final NettyServerHandler nettyServerHandler = new NettyServerHandler(getUrl(), getChannelHandler()); // 因为本身ChannelHandler对象

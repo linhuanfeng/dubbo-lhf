@@ -19,6 +19,10 @@
         <module>dubbo-remoting</module>
         <module>dubbo-rpc</module>
         <module>dubbo-config</module>
+        <module>dubbo-test/dubbo-server</module>
+        <module>dubbo-test/dubbo-client</module>
+        <module>dubbo-test/feign-client</module>
+        <module>dubbo-test/feign-server</module>
     </modules>
     <!--统一版本管理-->
     <dependencyManagement>

@@ -40,7 +40,7 @@ public class NettyClient extends AbstractClient {
     private void initBootstrap(NettyClientHandler nettyClientHandler) {
         try {
             Channel channel = bootstrap.channel(NioSocketChannel.class)
-                    .group(new NioEventLoopGroup(2))
+                    .group(new NioEventLoopGroup(16))
                     .handler(new ChannelClientInitializer(nettyClientHandler,getUrl()))
                     .connect(new InetSocketAddress(getUrl().getHost(), getUrl().getPort()))
                     .sync()

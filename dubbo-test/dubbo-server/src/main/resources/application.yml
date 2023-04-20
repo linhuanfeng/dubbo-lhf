@@ -1,0 +1,15 @@
+host1: 127.0.0.1
+host2: 192.168.42.102
+host3: 106.54.190.66
+server:
+  port: 9089
+  # dubbo服务配置
+dubbo:
+  registry:
+    address: zookeeper://${host2}:2181
+  protocol:
+    port: 7030
+    name: dubbo
+spring:
+  application:
+    name: dubbo-eat-service

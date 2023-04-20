@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 // 基于linkedHashMap，但实际效果和轮询一致
-@Deprecated
+//@Deprecated
 public class LRULB implements LoadBalance {
     // key(interfaceName+version) value(key(ProtocolClient),value(ProtocolClient))
     private Map<String, LinkedHashMap<ProtocolClient, ProtocolClient>> serviceMap=new ConcurrentHashMap<>();
