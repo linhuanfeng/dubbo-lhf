@@ -1,4 +1,4 @@
-package com.example.clienttest.web;
+package com.example.clienttest;
 
 import com.example.commonapi.api.EatService;
 import com.lhf.dubbo.common.annotation.RpcReference;

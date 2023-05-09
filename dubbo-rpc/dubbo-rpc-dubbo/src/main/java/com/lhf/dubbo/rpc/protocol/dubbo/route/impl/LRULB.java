@@ -23,7 +23,7 @@ public class LRULB implements LoadBalance {
     public ProtocolClient select(String serviceKey,List<ProtocolClient> urlList) {
         Assert.notEmpty(urlList,"urlList is null,serviceKey:"+serviceKey);
         LinkedHashMap<ProtocolClient, ProtocolClient> lruMap = serviceMap.get(serviceKey);
-        if(lruMap==null){
+        if(lruMap==null||lruMap.size()!=urlList.size()){
             // 服务第一次访问进行初始化
             lruMap = new LinkedHashMap<>(
                     100,0.75f,true);

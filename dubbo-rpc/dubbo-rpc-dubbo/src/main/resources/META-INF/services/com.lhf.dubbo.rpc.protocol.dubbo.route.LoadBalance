@@ -1,2 +1,4 @@
-com.lhf.dubbo.rpc.protocol.dubbo.route.impl.RoundRobbinLB
+com.lhf.dubbo.rpc.protocol.dubbo.route.impl.LFULB
 com.lhf.dubbo.rpc.protocol.dubbo.route.impl.LRULB
+com.lhf.dubbo.rpc.protocol.dubbo.route.impl.RandomLB
+com.lhf.dubbo.rpc.protocol.dubbo.route.impl.RoundRobbinLB

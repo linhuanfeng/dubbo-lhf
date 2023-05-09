@@ -1,4 +1,4 @@
-package com.example.servertest.impl;
+package com.example.servertest;
 
 
 import com.example.commonapi.api.HelloService;

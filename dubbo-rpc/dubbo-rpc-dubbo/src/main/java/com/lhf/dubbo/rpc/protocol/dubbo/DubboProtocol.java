@@ -35,6 +35,7 @@ public class DubboProtocol extends AbstractDubboProtocol {
 
     /**
      * 负责读写请求
+     *
      * @return
      */
     private ChannelHandler getChannelHandler() {
@@ -90,7 +91,6 @@ public class DubboProtocol extends AbstractDubboProtocol {
     /**
      * 利用channel的生命周期函数
      * 实现短线自动重连,多个ChannelHandler公用一个
-     *
      */
     private void channelReconnect(Channel channel) {
         try {
@@ -102,19 +102,21 @@ public class DubboProtocol extends AbstractDubboProtocol {
             }
             if (retryPolicy.retry()) {
                 log.info("短线重连,第{}次尝试,service:{},channel:{}",
-                        retryPolicy.getCurRetries(),url.getInterfaceName() + "-" + url.getVersion(),
+                        retryPolicy.getCurRetries(), url.getInterfaceName() + "-" + url.getVersion(),
                         channel.getChannel().remoteAddress());
                 openClient(url);
             } else {
                 log.error("重连失败，curRetries:{} 达到 maxRetries:{}", retryPolicy.getCurRetries(), url.getRetries());
             }
-        }catch (ConnectException e){
-            log.error("重连失败，远程服务器可能宕机或拒绝连接：{}",e.getMessage());
-        }catch (IOException e){
+        } catch (ConnectException e) {
+            log.error("重连失败，远程服务器可能宕机或拒绝连接：{}", e.getMessage());
+            channelReconnect(channel);
+        } catch (IOException e) {
             log.error(e.getMessage());
-        }
-        catch (Throwable e) {
-            log.error("重连失败，未知异常：{}",e.getMessage());
+            channelReconnect(channel);
+        } catch (Throwable e) {
+            log.error("重连失败，未知异常：{}", e.getMessage());
+            channelReconnect(channel);
             throw new RuntimeException(e);
         }
     }
@@ -198,7 +200,7 @@ public class DubboProtocol extends AbstractDubboProtocol {
                 rpcRequest.setVersion(urls.get(0).getVersion());
                 // 负载均衡
                 Collection<ProtocolClient> clients = protocolClientMap.get(ProtocolUtils.serviceNodeKey(urls.get(0))).values();
-                List<ProtocolClient> protocolClients=new ArrayList<>(clients.size());
+                List<ProtocolClient> protocolClients = new ArrayList<>(clients.size());
                 Assert.notEmpty(clients, "找不到可用的服务提供者：" + type);
                 log.info("可用的客户端连接有{}个，", clients.size());
                 for (ProtocolClient protocolClient : clients) {

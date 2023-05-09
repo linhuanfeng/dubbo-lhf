@@ -73,7 +73,7 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient {
 
     private void handlerEvent(PathChildrenCacheEvent event, String path, UpdateServerListCallBack updateServerListCallBack) {
         Map<ServerChangeType, List<URL>> map = new HashMap<>();
-        List<URL> urlList = new ArrayList<>(1);
+        List<URL> urlList = new ArrayList<>();
         if (event.getType().equals(PathChildrenCacheEvent.Type.CHILD_ADDED)) {
             log.info("子节点新增:path:{},data:{}", event.getData().getPath(), new String(event.getData().getData()));
             urlList.add(JsonUtil.JsonToObject(new String(event.getData().getData()), URL.class));
